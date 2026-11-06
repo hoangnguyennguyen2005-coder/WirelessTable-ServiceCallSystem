@@ -1,0 +1,15 @@
+interface:
+  display_name: Spec Kit
+  short_description: Turn ideas into specs, plans, tasks, and working code
+  default_prompt: Use $spec-kit to clarify my project, define an MVP, and carry its
+    specification through planning, implementation, and verification using the tools
+    available here.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

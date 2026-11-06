@@ -1,0 +1,17 @@
+interface:
+  display_name: spec first thinker
+  short_description: Apply a structured 4-stage cognitive and engineering protocol
+    (First-Principles Deconstruction, Trade-off Matrix, Pre-Mortem Stress Test, and
+    Atomic Execution Plan) before solving complex problems or building projects. Use
+    when the user asks to plan, architect, design, build, or evaluate a project, system,
+    hardware/software solution, or strategic decision, or when they ask for critical
+    thinking, trade-off analysis, or spec-first execution.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

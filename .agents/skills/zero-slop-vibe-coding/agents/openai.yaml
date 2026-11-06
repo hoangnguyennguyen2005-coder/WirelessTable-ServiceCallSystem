@@ -1,0 +1,14 @@
+interface:
+  display_name: Zero-Slop Vibe Coding
+  short_description: Minimal code, deliberate UI, evidence-backed audits
+  default_prompt: Use $zero-slop-vibe-coding to plan or implement this task with minimal
+    code, deliberate UI, and concrete security checks.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

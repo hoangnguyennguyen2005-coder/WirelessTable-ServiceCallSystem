@@ -1,0 +1,16 @@
+interface:
+  display_name: visual ui director
+  short_description: Directs high-craft UI/UX design systems, 5-layer image generation
+    prompts, and precision delta-based image editing. Use when the user asks to generate
+    images, edit or refine existing images, write image prompts, design UI/UX interfaces,
+    create wireframes or mockups, establish design tokens, or improve visual hierarchy
+    without generic AI clichés.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
