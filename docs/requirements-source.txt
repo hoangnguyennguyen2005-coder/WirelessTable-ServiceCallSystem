@@ -1,0 +1,271 @@
+Bạn là kỹ sư phần mềm chịu trách nhiệm triển khai sản phẩm MVP cho đồ án sinh viên ECE411/PBL4: Wireless Table Call Service — hệ thống gọi phục vụ không dây cho nhà hàng/quán café.
+
+Hãy trực tiếp đọc repository, lập đặc tả đủ dùng, viết code, chạy kiểm tra và hoàn thiện ứng dụng có thể demo. Tôi cần một phần mềm hoạt động từ đầu đến cuối, có lưu dữ liệu và tích hợp thiết bị qua một hợp đồng giao tiếp rõ ràng. Giao diện tĩnh với dữ liệu giả cố định không đáp ứng yêu cầu.
+1. Cách làm việc và quyền thực hiện
+- Đọc AGENTS.md, README, package manifests, source code, tests và tài liệu dự án đang có trước khi chọn cấu trúc.
+- Giữ lại công việc có sẵn, tránh ghi đè hoặc xóa code ngoài phạm vi. Nếu repository đã có stack phù hợp, tiếp tục stack đó.
+- Prompt này cho phép triển khai MVP và thêm các dependency dự án cần thiết trong environment của repository. Không cài công cụ hệ thống hoặc dịch vụ trả phí nếu không cần.
+- Tự quyết định các lựa chọn kỹ thuật thông thường, ghi vào docs/assumptions.md. Không dừng ở kế hoạch hoặc hỏi lại các thông tin đã có trong prompt.
+- Chỉ hỏi khi có xung đột nghiệp vụ thực sự ngăn triển khai hoặc một thao tác phá hủy dữ liệu. Trong lúc đó tiếp tục những phần độc lập.
+- Nếu có tài liệu mới mâu thuẫn với các quyết định cố định dưới đây, chỉ rõ vị trí và tác động; không tự thay đổi workflow. Tài liệu lịch sử dùng Concept A không được tự động thay thế Concept C.
+- Không tự publish, deploy public, push hoặc merge nếu chưa được yêu cầu. Làm việc trong checkout hiện tại theo quy tắc repository.
+- Sau mỗi chặng, cập nhật ngắn: đã chạy được gì, kiểm tra gì, bước tiếp theo. Chạy đến khi hoàn thành phạm vi hoặc có blocker cụ thể.
+- Khi không chạy được một kiểm tra vì environment, ghi đúng giới hạn; không báo “passed” hoặc “hardware verified” nếu chưa thực hiện.
+2. Bối cảnh và kiến trúc phần cứng đã chốt
+Concept C là phương án cuối cùng:
+1. Nút tại bàn: Arduino Pro Mini 3.3 V / ATmega328P, clock ≤4 MHz, BOD 1.8 V, cấp trực tiếp 2 pin AAA. Không tự thêm boost hoặc bộ sạc.
+2. Kết nối nút bàn tới gateway: nRF24L01+ theo mạng sao.
+3. Gateway: ESP32-C3 + nRF24L01+, nối USB serial tới máy tính trung tâm.
+4. Trung tâm: máy tính sẵn có tại quán, chạy backend và giao diện quản lý.
+5. Có thiết bị nhân viên trong phạm vi prototype; quản lý giao việc, nhân viên nhận việc trên thiết bị. Firmware/kết nối thiết bị nhân viên chưa được đặc tả đầy đủ trong prompt, phải đặt sau adapter riêng.
+6. Không giả định nút bàn kết nối Wi-Fi, HTTP, MQTT hoặc Internet trực tiếp.
+7. Nút bàn chỉ poll trạng thái trả về khi đang có yêu cầu; bình thường ngủ. Không dùng heartbeat liên tục cho tất cả nút bàn.
+Backend, database và workflow chính chạy tại quán, tiếp tục hoạt động khi mất Internet. Browser có thể truy cập dịch vụ trung tâm trên cùng máy; LAN là tùy chọn cấu hình. Cloud environment của Codex dùng để phát triển, kiểm tra và demo mô phỏng, không mặc nhiên có quyền truy cập USB gateway tại quán.
+
+Không đưa các ước tính tuổi thọ pin, độ trễ RF, độ phủ sóng hoặc tỷ lệ truyền thành công vào UI như số đo thực tế. Không có telemetry thì hiển thị “Chưa có dữ liệu”.
+3. Phạm vi triển khai
+Phải hoàn thành:
+- Backend nghiệp vụ và SQLite persistence.
+- Dashboard quản lý tiếng Việt, dùng được trên laptop.
+- Giao diện prototype nhân viên để nhận việc; ghi rõ đây là giao diện web mô phỏng chức năng thiết bị nhân viên.
+- Chế độ simulator với 24 bàn và 2 nhân viên mặc định.
+- Serial adapter cho gateway thật, tách khỏi domain logic.
+- Hàng đợi lệnh xuống thiết bị, nhận kết quả, retry có giới hạn và reconnect.
+- Lịch sử, nhật ký sự kiện, thống kê cơ bản và xuất CSV.
+- Kiểm tra tự động cho state machine và các tình huống lỗi quan trọng.
+- Hướng dẫn chạy mô phỏng, chạy local với gateway, demo và giới hạn kiểm chứng.
+Firmware hoàn chỉnh cho Pro Mini/nRF24 và thiết bị nhân viên không phải điều kiện hoàn thành phần mềm PC trong lần này. Nếu chưa có firmware, vẫn phải viết serial adapter thật và hợp đồng giao tiếp có thể triển khai; không thay bằng hàm giả trả thành công. Không tự viết firmware theo pinout hoặc cấu hình radio tưởng tượng. Tạo tài liệu firmware integration và công cụ serial emulator phục vụ kiểm thử phần mềm.
+
+Không mở rộng MVP sang gọi món, thanh toán, kho, loyalty, nhiều chi nhánh, AI/chatbot, native mobile hoặc hệ thống SaaS.
+4. Workflow cố định
+Gửi yêu cầu tại bàn
+- Khách nhấn giữ nút gọi liên tục 5 giây; trong thời gian giữ, LED đỏ nhấp nháy.
+- Thả trước ngưỡng thì hủy thao tác giữ; trung tâm không tạo yêu cầu.
+- Sau khi đủ 5 giây và trung tâm đã tiếp nhận/lưu yêu cầu, LED đỏ sáng liên tục.
+- Nếu chưa nhận được xác nhận của trung tâm thì không được giả lập LED đỏ sáng liên tục như đã gửi thành công. Dùng trạng thái “đang gửi/chưa xác nhận” rõ ràng trong simulator; kiểu chớp LED khi lỗi là giả định cần firmware xác nhận.
+- Giữ nút và debounce thuộc firmware/simulator; backend chỉ nhận CALL hợp lệ. Không buộc backend phải nhận các tick giữ nút qua RF.
+Quản lý xác nhận
+- Yêu cầu xuất hiện trên dashboard ngay sau khi backend lưu thành công.
+- Quản lý bấm “Xác nhận”; backend ghi nhận và xếp lệnh trả trạng thái về bàn.
+- Nút bàn nhận trạng thái qua lần poll khi đang có yêu cầu và đổi LED đỏ sang xanh.
+- Phân biệt rõ “quản lý đã xác nhận” với “đèn tại bàn đã đổi xanh”. Chưa có phản hồi của thiết bị thì UI hiển thị đang chờ đồng bộ.
+- RF transport ACK không tương đương với quản lý xác nhận hoặc backend đã commit database.
+Giao việc và nhận việc
+- Quản lý chọn một nhân viên khả dụng để giao yêu cầu đã xác nhận.
+- Nhân viên nhận thông báo trên giao diện prototype và bấm “Nhận việc”.
+- Đã giao, đã gửi tới thiết bị và nhân viên đã nhận là các khái niệm riêng.
+- Việc nhân viên nhận không được đóng yêu cầu hoặc tắt LED xanh.
+Hoàn tất tại bàn
+- Khi đã phục vụ, nhân viên bấm đúp nút nhỏ ẩn tại bàn.
+- Sự kiện DONE hợp lệ làm backend đóng yêu cầu; dashboard bỏ khỏi hàng đợi đang hoạt động.
+- Sau khi nút bàn biết trung tâm đã tiếp nhận DONE, LED xanh tắt và nút trở lại trạng thái ngủ.
+- Web nhân viên không có thao tác “Hoàn tất” có thể thay thế nút vật lý. Chỉ simulator trong chế độ mô phỏng được tạo sự kiện bấm đúp.
+Nhắc việc
+- Yêu cầu chưa hoàn tất sau hơn 5 phút kể từ lúc trung tâm nhận CALL phải nhắc quản lý, kể cả đã xác nhận hoặc đã giao việc.
+- Mốc mặc định 300 giây; đúng ngưỡng chưa coi là “hơn 5 phút”. Lưu timestamp để khôi phục sau restart.
+- Nhắc một lần cho mỗi yêu cầu trong MVP; lần nhắc sau là tính năng ngoài phạm vi. Ghi đây là mặc định triển khai nếu tài liệu không quy định số lần.
+- Không reset thời gian chờ khi ACK, giao lại hoặc nhân viên nhận việc. Quá hạn là cờ đi kèm, không thay thế trạng thái nghiệp vụ.
+5. State machine và quy tắc nhất quán
+Đề xuất state machine: WAITING_ACK → ACKNOWLEDGED → ASSIGNED → ACCEPTED → COMPLETED.
+- Mỗi bàn có tối đa một yêu cầu chưa hoàn tất, được bảo vệ ở database và trong transaction.
+- CALL lặp lại khi bàn đang có yêu cầu phải trả lại yêu cầu hiện tại, không tạo thêm và không thay thời gian bắt đầu.
+- ACK lặp lại, ACCEPT lặp lại, DONE lặp lại phải idempotent.
+- Cho phép DONE từ ACKNOWLEDGED, ASSIGNED hoặc ACCEPTED: việc phục vụ tại bàn có thể xảy ra trước khi thao tác nhận việc được đồng bộ. Phải ghi lại trạng thái lúc đóng để kiểm toán.
+- DONE từ WAITING_ACK hoặc khi không có yêu cầu thì từ chối và log lý do; không tự tạo yêu cầu hoặc tự xác nhận thay quản lý. Đây là mặc định xử lý trường hợp chưa được chốt, phải ghi vào assumptions.
+- Gói DONE của một yêu cầu đã đóng không được đóng nhầm yêu cầu mới tại cùng bàn.
+- Giao lại do quản lý thực hiện, có lịch sử nhân viên cũ/mới. Nếu đã ACCEPTED, UI cần xác nhận giao lại và backend tăng assignment revision; ACCEPT cũ phải bị từ chối.
+- Hai browser thao tác đồng thời: dùng version/revision hoặc điều kiện cập nhật để tránh lost update. Trả conflict có thông báo và refresh dữ liệu.
+- Mất kết nối, pin yếu, đồng bộ đèn và quá hạn là thông tin riêng, không biến thành các trạng thái hoàn tất.
+Viết bảng transition: trạng thái đầu, action/event, điều kiện, trạng thái sau, dữ liệu lưu, lệnh thiết bị, trường hợp từ chối. Unit tests phải bám bảng này.
+6. Stack và cấu trúc
+Nếu repository trống, dùng phương án mặc định gọn:
+- Frontend: React + TypeScript + Vite.
+- Backend: Python + FastAPI, SQLite, pyserial cho gateway.
+- Realtime: SSE từ backend xuống UI; POST cho thao tác. Không cần dùng đồng thời SSE và WebSocket.
+- Pydantic cho request/event validation; pytest cho nghiệp vụ; công cụ kiểm tra frontend và E2E phù hợp dependency thực tế.
+- Chọn CSS và thư viện UI ít dependency; dùng token màu/khoảng cách rõ ràng.
+- Frontend build được backend phục vụ khi chạy local; dev mode có proxy. Dùng đường dẫn tương đối để tránh hardcode host.
+- Dùng phiên bản ổn định tương thích trong environment, tạo lockfile; kiểm tra tài liệu chính thức khi cần API cụ thể. Không tự tuyên bố một phiên bản là mới nhất.
+Cấu trúc tham khảo, điều chỉnh theo repository:
+backend/app/domain/
+backend/app/services/
+backend/app/api/
+backend/app/adapters/
+backend/app/db/
+backend/tests/
+frontend/src/
+tools/
+docs/
+Domain service không phụ thuộc trực tiếp serial port hoặc component UI. Một command/event đi qua cùng domain logic dù nguồn là simulator hay gateway thật.
+
+Không thêm Redis, broker MQTT, Kubernetes, microservice hoặc database server cho MVP này. Không dùng localStorage làm nguồn dữ liệu nghiệp vụ chính.
+7. Data model và persistence
+Thiết kế tối thiểu:
+- Table: id nội bộ, node_id duy nhất, tên hiển thị, bật/tắt sử dụng.
+- Staff: id, tên, active/available. Vai trò prototype cần phân biệt với tài khoản đăng nhập.
+- ServiceRequest: id, table_id, trạng thái, received_at, acknowledged_at, assignment hiện tại/revision, accepted_at, completed_at, reminded_at, version.
+- AssignmentHistory: yêu cầu, nhân viên, revision, thời điểm giao/nhận/thu hồi và actor.
+- DeviceObservation: node_id, last_seen, reported LED/status, battery telemetry nếu có, request đồng bộ gần nhất.
+- EventLog: event_id, loại, nguồn, actor/node, request_id, thời điểm nhận, kết quả xử lý, lý do từ chối; tránh lưu bí mật.
+- OutboxCommand: command_id, target, request_id, loại, payload, revision, trạng thái, số lần thử, lần thử tới, lỗi và thời hạn hiệu lực.
+- ProcessedEvent/dedup record hoặc ràng buộc tương đương để khử trùng sau restart.
+Lưu thay đổi request, event log và outbox cần thiết trong cùng transaction. Không gửi lệnh thiết bị trước rồi mới thử lưu dữ liệu.
+
+Lưu UTC, hiển thị Asia/Ho_Chi_Minh. Thời gian chờ tính từ timestamp backend, không dựa vào đồng hồ thiết bị chưa đồng bộ. Seed 24 bàn/2 nhân viên chỉ khi khởi tạo dữ liệu demo; restart không được seed trùng hoặc reset yêu cầu đang mở.
+
+Có migration/version schema và hướng dẫn backup/restore SQLite nhất quán. Không commit file database đang chứa dữ liệu runtime.
+8. Hợp đồng gateway và giao tiếp
+Tạo docs/protocol.md gồm hai lớp riêng:
+
+USB serial PC ↔ ESP32-C3
+- Đề xuất newline-delimited JSON có protocol_version, message_type, event_id hoặc command_id, node_id, request/session correlation, sequence/boot identifier nếu cần, payload.
+- Serial port và baudrate cấu hình bằng environment/config; giá trị mặc định chỉ là hợp đồng đề xuất cho firmware sau này.
+- Parser xử lý dòng bị chia nhỏ, nhiều dòng trong một lần đọc, dữ liệu sai JSON, kiểu sai, dòng quá dài và mất kết nối; đặt giới hạn bộ đệm.
+- Không để malformed frame làm crash backend hoặc ghi dữ liệu nghiệp vụ nửa chừng.
+- Các event tối thiểu: CALL, STATUS_POLL, DONE, DEVICE_STATUS/STATUS_APPLIED khi firmware hỗ trợ.
+- Các response/command tối thiểu: CALL_RECEIPT, SET_REQUEST_STATUS, DONE_RECEIPT, ERROR. Thiết kế tên cuối cùng nhất quán trong code/tests/docs.
+- CALL_RECEIPT chỉ phát sau commit. DONE_RECEIPT có thể gửi lại cho DONE đã xử lý mà không đóng yêu cầu khác.
+- Mô tả một transcript đầy đủ từ CALL đến DONE, cả retry và duplicate.
+RF gateway ↔ nút bàn
+- nRF24L01+ có payload giới hạn 32 byte; không giả định gửi nguyên một dòng JSON USB qua một RF packet.
+- Đề xuất một RF frame nhị phân versioned gọn, ghi bảng byte offset/type/length/endian và tổng kích thước không quá 32 byte. Token/correlation phải có ánh xạ rõ tới request ID backend.
+- Nếu chưa triển khai firmware thì ghi rõ RF frame là đề xuất cần xác nhận, không tự tuyên bố đã tương thích phần cứng hiện có.
+- Phải giải quyết CALL đầu tiên chưa có request_id: node tạo call token ổn định cho một lần gọi, retry dùng lại token; backend ánh xạ token sang request. Node giữ correlation tới DONE và cả retry DONE.
+- Có boot/session identifier hoặc cơ chế tương đương để sequence reset sau reboot không gây nhầm event cũ; ghi giới hạn nếu node mất trạng thái sau mất nguồn.
+- ACK về nghiệp vụ dùng correlation đúng yêu cầu, không dùng mỗi table_id.
+9. Polling, outbox và xác nhận thiết bị
+- Nút ngủ bình thường nên “lần cuối thấy từ lâu” không đủ để kết luận offline. UI hiển thị last seen/“đang ngủ hoặc chưa có dữ liệu” cho nút idle.
+- Khi request active, nút poll trạng thái. Khoảng poll mặc định triển khai là 5 giây, cấu hình được và chưa phải thông số đã đo.
+- Manager ACK có thể phải chờ lần poll kế tiếp mới đến bàn; hiển thị “Đang chờ bàn nhận” thay vì báo đèn đã đổi.
+- Outbox lưu trạng thái mong muốn, tách xác nhận USB gateway với xác nhận trạng thái đã áp dụng tại nút bàn.
+- Khi một node poll, trả trạng thái hiện hành có correlation/revision; không bắn các lệnh radio liên tục vào node đang ngủ.
+- Lệnh lỗi thời phải được supersede hoặc kiểm tra version. Lệnh ACK cũ không được bật lại đèn xanh sau khi DONE.
+- Command retry có giới hạn/backoff, giới hạn tần suất và error hiển thị. Không retry mù với một command đã hết hiệu lực.
+- Sau DONE có thể node dừng poll: hỗ trợ DONE retry và DONE_RECEIPT để tránh mắc kẹt LED xanh khi mất gói xác nhận.
+- Gateway reconnect phải khôi phục outbox, không nhân bản yêu cầu; đối soát trạng thái khi node liên lạc lại.
+- Mức pin: nếu chỉ nhận điện áp mà chưa có mô hình đã hiệu chuẩn thì hiển thị mV/V, không tự biến thành % hoặc số ngày còn lại.
+10. API và cập nhật giao diện
+Định nghĩa API có schema, validation và mã lỗi rõ. Các nhóm tối thiểu:
+- Snapshot dashboard: bàn, request active, nhân viên, kết nối gateway.
+- Request details và event timeline.
+- ACK, assign/reassign, accept với expected_version/revision và idempotency key phù hợp.
+- Lịch sử phân trang, lọc thời gian/bàn/nhân viên/trạng thái.
+- Export CSV theo bộ lọc.
+- Table/staff configuration cơ bản.
+- Health/config đã lọc bí mật.
+- Event stream SSE và snapshot khi reconnect.
+- Simulator actions chỉ tồn tại trong chế độ simulation được bật rõ ràng.
+Backend là nguồn sự thật. Không đổi UI sang trạng thái thành công khi POST còn pending hoặc bị lỗi. Khi SSE đứt, hiện banner, reconnect có backoff và nạp lại snapshot để bù sự kiện bị bỏ lỡ. Không tạo nhiều subscription/timer sau mỗi render.
+11. Dashboard quản lý
+Thiết kế công cụ làm việc rõ ràng, không làm landing page quảng cáo.
+- Header: “PBL4 — Gọi phục vụ”, mode mô phỏng/phần cứng, trạng thái kết nối trung tâm/gateway, giờ hiện tại.
+- Khu vực chính: lưới bàn, hàng đợi đang chờ, yêu cầu đang phục vụ; bộ lọc ngắn gọn.
+- Mỗi bàn: tên bàn, trạng thái chữ/icon, thời gian chờ, nhân viên được giao, cờ quá hạn và đồng bộ thiết bị khi cần.
+- Bấm bàn mở panel chi tiết: timeline, nút xác nhận, giao/giao lại, kết quả lệnh xuống thiết bị.
+- Yêu cầu mới và quá hạn nổi bật, mặc định ưu tiên quá hạn rồi thời gian chờ lâu nhất.
+- Tổng quan: đang chờ xác nhận, đã xác nhận chưa giao, đang giao/phục vụ, quá hạn; thống kê không đếm lặp một request trong tổng active.
+- Ánh xạ màu có ý nghĩa: bàn rảnh trung tính, chờ xác nhận đỏ, quản lý đã xác nhận xanh; quá hạn có badge riêng. Màu UI không được dùng làm bằng chứng LED thật đã áp dụng.
+- Có text/icon ngoài màu; focus bàn phím, contrast dễ đọc, button hit area phù hợp.
+- Loading, empty, lỗi API, mất gateway, tên dài, danh sách nhiều dòng và database trống đều có trạng thái UI.
+- Responsive ở khoảng 1366×768; giao diện nhân viên dùng được ở khoảng 390 px chiều rộng.
+- Hạn chế animation, gradient, glassmorphism và card trang trí; ưu tiên đọc nhanh trong môi trường quán.
+- Âm thanh thông báo có bật/tắt, cần thao tác người dùng để kích hoạt nếu browser yêu cầu; không phát lặp liên tục cho cùng event.
+12. Giao diện nhân viên prototype
+- Hiển thị rõ nhân viên đang sử dụng, danh sách việc được giao, bàn, thời gian chờ và nút Nhận việc.
+- Chỉ nhận assignment đúng nhân viên và revision hiện tại; giới hạn ở backend.
+- Sau khi nhận, hiển thị “Đến bàn phục vụ và bấm đúp nút ẩn để hoàn tất”.
+- Không đóng yêu cầu qua nút web, không tự coi là xong sau timeout.
+- Nếu giao lại, yêu cầu biến mất khỏi danh sách nhân viên cũ; accept từ màn hình stale trả conflict dễ hiểu.
+- Demo selector đổi nhân viên chỉ dùng trong simulation/development, có nhãn rõ. Không quảng bá selector này là phân quyền bảo mật.
+- Tạo StaffDeviceAdapter/protocol boundary để sau này thay UI prototype bằng thiết bị thật mà không sửa state machine.
+13. Simulator và demo
+Simulator phải tương tác thật với backend/persistence, không chỉ đổi màu frontend.
+- 24 bàn, 2 nhân viên mặc định; chế độ mô phỏng hiển thị rõ trên mọi màn hình liên quan.
+- Nút press/release hỗ trợ mouse/pointer cancel; đồng hồ đủ 5 giây liên tục mới sinh CALL. Hủy giữ trước ngưỡng không gửi CALL.
+- Hiển thị LED mô phỏng đúng các giai đoạn giữ/gửi/chờ xác nhận/xanh/tắt.
+- Nút ẩn mô phỏng nhận hai lần bấm riêng; cửa sổ bấm đúp là mặc định triển khai cấu hình được, ghi rõ chưa phải ngưỡng firmware chốt.
+- Mô phỏng polling chỉ khi request active, mất gói một lần, duplicate, trễ, gateway disconnect/reconnect và STATUS_APPLIED.
+- Có kịch bản phát sinh nhiều bàn cùng lúc và một yêu cầu quá hạn.
+- Không phải chờ 5 phút cho unit/E2E test: inject clock. Nếu demo có chế độ tua thời gian thì cô lập trong simulation, gắn nhãn và không sửa clock của database phần cứng thật.
+- Simulation và hardware sử dụng profile/database riêng. Đổi mode phải tường minh, không tự chuyển sang simulator khi rút gateway.
+- Không trộn demo events vào lịch sử vận hành thật. Reset demo chỉ áp dụng demo database, có xác nhận và không reset dữ liệu khi app khởi động.
+14. Bảo vệ ứng dụng phù hợp MVP
+- Mặc định bind loopback. Nếu hỗ trợ LAN, yêu cầu cấu hình chủ động và có cơ chế đăng nhập/session cho manager/staff, kiểm tra quyền tại backend.
+- Demo account hoặc selector không được coi là authentication trong hardware/LAN mode.
+- Không hardcode mật khẩu/token; cung cấp .env.example với placeholder. Không log secret hoặc commit .env.
+- Restrict CORS/allowed origins; bảo vệ thao tác ghi khỏi request ngoài origin theo cơ chế auth đã chọn.
+- Validate node_id, table_id, staff_id, timestamp, event type, payload length và transition. Reject node chưa đăng ký.
+- Parameterized database queries, render text an toàn, chống CSV formula injection khi export.
+- Lỗi UI dễ hiểu; traceback chỉ nằm trong log phát triển.
+- Không thêm login SaaS/phân quyền phức tạp nếu loopback demo không cần; ghi rõ phạm vi bảo vệ và giới hạn radio trust của prototype.
+15. Kiểm tra bắt buộc
+Viết và chạy kiểm tra có giá trị cho:
+1. Giữ 4,9 giây rồi thả: không có request; đủ 5 giây: có đúng một request.
+2. CALL retry trước/sau restart: cùng một yêu cầu, không reset thời gian.
+3. Hai CALL đồng thời cho cùng bàn: chỉ một request active.
+4. Manager ACK: lưu trạng thái, tạo outbox, chưa báo LED applied khi thiếu phản hồi.
+5. Poll nhận ACK: LED mô phỏng xanh; RF/USB ACK không tự đổi trạng thái manager.
+6. Assign rồi đúng nhân viên accept; sai nhân viên hoặc revision cũ bị từ chối.
+7. Accept không đóng request; web không có đường tắt hoàn tất trái workflow.
+8. DONE từ trạng thái hợp lệ: đóng một lần, LED tắt sau receipt; DONE retry không làm sai.
+9. DONE cũ tới sau CALL mới: không đóng request mới.
+10. Sau hơn 300 giây chưa hoàn tất: nhắc đúng một lần; ACK/assign không reset mốc; completed không nhắc.
+11. Restart giữ active requests, overdue state, dedup và outbox.
+12. Malformed/oversized/fragmented serial frame không làm crash; reconnect không nhân bản dữ liệu.
+13. SSE reconnect phục hồi snapshot và không tạo listener trùng.
+14. Pending ACK cũ không bật lại LED sau DONE; mất DONE_RECEIPT được khôi phục qua retry.
+15. Mất Internet không ảnh hưởng workflow local; idle node không bị gán offline chỉ do đang ngủ.
+16. Demo/hardware database tách biệt; không có simulation action trong hardware mode.
+Dùng fake clock cho timeout, fake serial transport cho lỗi/parser và database tạm cho integration tests. E2E tối thiểu bao phủ CALL → ACK → ASSIGN → ACCEPT → DONE. Nếu có browser test capability, kiểm tra desktop/mobile, chụp ảnh chỉ làm bằng chứng UI khi có thể. Báo riêng kiểm tra phần mềm và các phép đo chưa thực hiện với thiết bị.
+16. Các chặng thực hiện
+Chặng A — Đọc và đặc tả
+
+Kiểm tra repository, liệt kê đã có/thiếu. Tạo docs/spec.md, docs/architecture.md, docs/state-machine.md, docs/assumptions.md và docs/tasks.md. Ghi mục nào là yêu cầu đã chốt, mục nào là mặc định triển khai. Nếu không có logbook trong repository, ghi điều đó và tiếp tục với prompt; không giả vờ đã đọc tài liệu.
+
+Chặng B — Luồng nghiệp vụ chạy được
+
+Database/migration, domain service, API, fake transport và test state machine; chứng minh lifecycle cơ bản bằng test hoặc API script.
+
+Chặng C — Dashboard và nhân viên
+
+UI tiếng Việt nối API thật, realtime/reconnect, timeline và thao tác có error handling; không để mock array thành nguồn dữ liệu chính.
+
+Chặng D — Simulator và serial
+
+Tích hợp simulator, polling/outbox/retry, serial adapter, protocol, serial emulator và fault scenarios. Phần không kiểm chứng được trên phần cứng ghi rõ trong docs/hardware-integration.md.
+
+Chặng E — Hoàn thiện
+
+Lịch sử/export/thống kê, UI states, kiểm tra hồi quy, build và hướng dẫn demo. Kiểm tra toàn bộ yêu cầu đối chiếu code/test, sửa lỗi tìm thấy trong phạm vi đã cho phép.
+
+Ưu tiên các chặng theo thứ tự phụ thuộc; hoàn thành đến E. Không dừng sau A để yêu cầu “bạn muốn tôi code tiếp không?”. Nếu thời lượng một phiên không đủ, lưu tiến độ và bước tiếp theo trong tasks để tiếp tục đúng chỗ.
+17. Tài liệu và lệnh chạy
+README phải có:
+- Yêu cầu runtime và phiên bản thực tế đã kiểm tra.
+- Lệnh cài dependency trong project, chạy backend/frontend dev, chạy mô phỏng, build và chạy app local sau build.
+- Một script khởi động demo gọn nếu environment cho phép; hỗ trợ hướng dẫn Windows PowerShell cho máy demo, không bắt người dùng cài Docker.
+- Lệnh lint/typecheck/test/build đúng với những script đã tạo.
+- Serial config: port Windows COMx/Linux device, baud, reconnect, mode và nơi xem log.
+- Đường dẫn database, cách backup/restore, cách reset demo và cảnh báo rõ reset chỉ demo.
+- Kịch bản demo khoảng 5–7 phút: giữ nút, ACK, giao, nhận, double press, quá hạn, mất gateway và khôi phục.
+- Cách thêm gateway firmware theo protocol và các phép kiểm chứng bàn giao phần cứng: CALL receipt, ACK qua poll, DONE receipt, reconnect, packet trùng.
+- Danh sách phần chưa đo: RF range, latency thật, delivery success, current/battery life và tương thích firmware thực tế.
+Tạo docs/verification.md ghi lệnh thực sự đã chạy, kết quả, lỗi còn lại và giới hạn. Không ghi các kết quả đo giả để làm đẹp báo cáo.
+18. Tiêu chí hoàn thành
+MVP hoàn thành khi:
+- Clone/checkout và làm đúng README có thể chạy demo đầy đủ với 24 bàn/2 nhân viên.
+- Thao tác tạo và thay đổi dữ liệu thật ở backend, reload/restart không mất request.
+- Workflow đúng nhấn giữ 5 giây → chờ ACK → quản lý ACK/LED xanh qua poll → giao/nhận → double press tại bàn → đóng/tắt LED.
+- Quá hạn hơn 5 phút được xử lý đúng, có lịch sử và không phụ thuộc browser đang mở.
+- Serial adapter/parser/outbox hoạt động với emulator và có tài liệu kết nối thiết bị thật; không tuyên bố đã chạy phần cứng khi chưa có thiết bị.
+- Các kiểm tra nghiệp vụ quan trọng, typecheck/lint/build khả dụng đều pass, hoặc blocker được mô tả cụ thể thay vì bỏ qua.
+- Không còn nút chính không hoạt động, dữ liệu giả ngụy trang dữ liệu thật, TODO che một chức năng trong scope hoặc đường tắt phá workflow.
+19. Cách báo kết quả cuối
+Trả lời ngắn bằng tiếng Việt:
+1. Đã xây dựng những phần nào.
+2. Các file/đường dẫn quan trọng.
+3. Lệnh chính xác để chạy demo và test.
+4. Những kiểm tra đã chạy và kết quả.
+5. Phần cần kết nối/kiểm chứng bằng phần cứng thật.
+6. Các giả định triển khai đáng chú ý hoặc blocker còn lại.
+Bắt đầu ngay bằng việc đọc repository và triển khai chặng A, rồi tiếp tục đến khi có MVP hoạt động theo tiêu chí trên.
