@@ -7,10 +7,11 @@ test.beforeEach(async ({ request }) => {
   expect(r.ok()).toBeTruthy();
 });
 
-test("desktop full CALL → ACK → ASSIGN → ACCEPT → physical-sim DONE", async ({
+test("desktop Bill call → ACK → dispatch → staff accept → double press at table", async ({
   page,
   context,
 }) => {
+  test.setTimeout(60000);
   await page.setViewportSize({ width: 1366, height: 768 });
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
@@ -22,31 +23,39 @@ test("desktop full CALL → ACK → ASSIGN → ACCEPT → physical-sim DONE", as
     page.getByRole("button", { name: /Bàn \d+ — Bàn rảnh/ }),
   ).toHaveCount(24);
   await page.getByRole("button", { name: "Bàn mô phỏng", exact: true }).click();
-  const call = page.getByRole("button", { name: "GIỮ ĐỂ GỌI 5 giây liên tục" });
-  await call.focus();
+  const bill = page.getByRole("button", { name: "THANH TOÁN Giữ 5 giây" });
+  await bill.focus();
   await page.keyboard.down("Space");
   await page.waitForTimeout(200);
   await page.keyboard.up("Space");
-  await expect(page.getByText("Đang ngủ · LED tắt")).toBeVisible();
-  await call.focus();
+  await expect(page.getByText("Đang ngủ · đèn tắt")).toBeVisible();
+  await bill.focus();
   await page.keyboard.down("Space");
   await page.waitForTimeout(5200);
   await page.keyboard.up("Space");
-  await expect(page.getByText("Trung tâm đã lưu · LED đỏ")).toBeVisible();
+  await expect(
+    page.getByText("Trung tâm đã ghi nhận · đèn đỏ sáng"),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Tổng quan", exact: true }).click();
-  await page.getByRole("button", { name: "Bàn 01 — Chờ xác nhận" }).click();
+  await page
+    .getByRole("button", { name: "Bàn 01 — Thanh toán · Chờ xác nhận" })
+    .click();
   await page
     .getByRole("button", { name: "Xác nhận yêu cầu", exact: true })
     .click();
-  await expect(
-    page.getByText("Đang chờ bàn nhận", { exact: true }),
-  ).toBeVisible();
+  // Manager acknowledged is not the same as the table showing green: it follows a poll.
+  await expect(page.getByText("Bàn báo đã hiển thị: đèn xanh")).toBeVisible({
+    timeout: 10000,
+  });
   await page
     .getByLabel("Giao cho nhân viên", { exact: true })
     .selectOption("1");
   const staff = await context.newPage();
   await staff.setViewportSize({ width: 390, height: 844 });
   await staff.goto("/staff");
+  await expect(staff.getByText("Thanh toán", { exact: true })).toBeVisible({
+    timeout: 10000,
+  });
   await staff.getByRole("button", { name: "Nhận việc", exact: true }).click();
   await expect(
     staff.getByText("Đến bàn phục vụ và bấm đúp nút ẩn để hoàn tất."),
@@ -63,9 +72,9 @@ test("desktop full CALL → ACK → ASSIGN → ACCEPT → physical-sim DONE", as
     path: "../docs/screenshots/staff.png",
     fullPage: true,
   });
-  await expect(
-    page.getByRole("button", { name: "Bàn 01 — Đang phục vụ" }),
-  ).toBeVisible();
+  await expect(page.getByText(/Nhân viên đã nhận lúc/)).toBeVisible({
+    timeout: 10000,
+  });
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth,
@@ -77,18 +86,26 @@ test("desktop full CALL → ACK → ASSIGN → ACCEPT → physical-sim DONE", as
     fullPage: true,
   });
   await page.getByRole("button", { name: "Bàn mô phỏng", exact: true }).click();
+  await expect(
+    page.getByText("Quản lý đã xác nhận · đèn xanh sáng"),
+  ).toBeVisible();
   const hidden = page.getByRole("button", {
-    name: "Nút ẩn · bấm hai lần để hoàn tất",
+    name: "Nút ẩn hoàn tất · bấm hai lần",
   });
   await hidden.click();
   await page.waitForTimeout(120);
   await hidden.click();
-  await expect(page.getByText("Đang ngủ · LED tắt")).toBeVisible();
-  await staff.reload();
-  await expect(staff.getByText("Chưa có việc được giao")).toBeVisible();
+  await expect(page.getByText("Đang ngủ · đèn tắt")).toBeVisible();
+  await expect(staff.getByText("Chưa có việc được giao")).toBeVisible({
+    timeout: 10000,
+  });
   await page.getByRole("button", { name: "Lịch sử", exact: true }).click();
   await expect(
     page.locator("tbody").getByRole("cell", { name: "Hoàn tất", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "Nhật ký sự kiện" }).click();
+  await expect(
+    page.locator("tbody").getByText("Hoàn tất tại bàn"),
   ).toBeVisible();
   expect(errors).toEqual([]);
 });
@@ -104,10 +121,20 @@ test("SSE reconnect snapshot, one subscription, reminder and gateway fault", asy
   await expect(
     page.getByRole("heading", { name: "Tổng quan tại quán" }),
   ).toBeVisible();
+  // An open event log must show new events by itself (AT-07 row 2a reads it live).
+  await page.getByRole("button", { name: "Lịch sử", exact: true }).click();
+  await page.getByRole("tab", { name: "Nhật ký sự kiện" }).click();
+  await expect(
+    page.getByRole("tab", { name: "Nhật ký sự kiện" }),
+  ).toHaveAttribute("aria-selected", "true");
+  await page.waitForTimeout(500); // initial list loaded before the new events arrive
+  await page.request.post("/api/sim/action", { data: { action: "burst" } });
+  await expect(
+    page.locator("tbody").getByText("Trung tâm ghi nhận yêu cầu"),
+  ).toHaveCount(4, { timeout: 5000 });
   await page.getByRole("button", { name: "Bàn mô phỏng", exact: true }).click();
-  await page.getByRole("button", { name: "Gọi đồng thời 4 bàn" }).click();
   await page
-    .getByRole("button", { name: "Tua +301 giây · chỉ clock demo" })
+    .getByRole("button", { name: "Tua +300 giây · chỉ đồng hồ demo" })
     .click();
   await page.getByRole("button", { name: "Ngắt gateway mô phỏng" }).click();
   await expect(page.getByText(/Gateway đang ngắt/)).toBeVisible();
@@ -116,9 +143,11 @@ test("SSE reconnect snapshot, one subscription, reminder and gateway fault", asy
   await page.waitForTimeout(1500);
   await page.context().setOffline(false);
   await page.getByRole("button", { name: "Tổng quan", exact: true }).click();
+  // Exactly 300 s after registration counts as overdue (≥ 300 s).
   await expect(page.getByRole("button", { name: /Quá 5 phút 4/ })).toBeVisible({
     timeout: 15000,
   });
+  await expect(page.getByText(/Nhắc: 4 yêu cầu/)).toBeVisible();
   await expect(page.getByText("Trung tâm trực tuyến")).toBeVisible({
     timeout: 15000,
   });
@@ -128,36 +157,43 @@ test("SSE reconnect snapshot, one subscription, reminder and gateway fault", asy
   expect(streams).toBeLessThanOrEqual(3);
 });
 
-test("staff inbox recovers from API error with retry", async ({
+test("staff device screen recovers from API error; undelivered dispatch stays visible", async ({
   page,
   request,
 }) => {
+  test.setTimeout(60000);
   await request.post("/api/sim/action", { data: { action: "burst" } });
+  await request.post("/api/sim/action", {
+    data: { action: "staff_power", staff_id: 2, enabled: false },
+  });
   const snapshot = await (await request.get("/api/snapshot")).json();
-  const r = snapshot.requests[0];
-  const ack = await request.post(`/api/requests/${r.id}/ack`, {
-    data: { expected_version: r.version, idempotency_key: crypto.randomUUID() },
-  });
-  const acknowledged = await ack.json();
-  await request.post(`/api/requests/${r.id}/assign`, {
-    data: {
-      expected_version: acknowledged.version,
-      idempotency_key: crypto.randomUUID(),
-      staff_id: 1,
-    },
-  });
-  await page.route("**/api/staff/1/inbox", (route) =>
+  const dispatch = (index: number, staff_id: number) =>
+    request.post(`/api/requests/${snapshot.requests[index].id}/dispatch`, {
+      data: {
+        expected_version: snapshot.requests[index].version,
+        idempotency_key: crypto.randomUUID(),
+        staff_id,
+      },
+    });
+  expect((await dispatch(0, 1)).ok()).toBeTruthy();
+  expect((await dispatch(1, 2)).ok()).toBeTruthy();
+  await page.route("**/api/staff-device/1", (route) =>
     route.fulfill({
       status: 503,
       contentType: "application/json",
-      body: JSON.stringify({ detail: "Tạm ngắt hộp công việc" }),
+      body: JSON.stringify({ detail: "Tạm ngắt thiết bị" }),
     }),
   );
   await page.goto("/staff");
-  await expect(page.getByRole("alert")).toContainText("Tạm ngắt hộp công việc");
-  await page.unroute("**/api/staff/1/inbox");
+  await expect(page.getByRole("alert")).toContainText("Tạm ngắt thiết bị");
+  await page.unroute("**/api/staff-device/1");
   await page.getByRole("button", { name: "Kiểm tra cập nhật" }).click();
   await expect(
     page.getByRole("button", { name: "Nhận việc", exact: true }),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 10000 });
+  // The device of staff 2 is off: the dispatch must remain visibly unresolved (ER-P05).
+  await page.goto("/");
+  await expect(
+    page.getByRole("button", { name: /Bàn 02 · Chưa tới thiết bị nhân viên/ }),
+  ).toBeVisible({ timeout: 20000 });
 });

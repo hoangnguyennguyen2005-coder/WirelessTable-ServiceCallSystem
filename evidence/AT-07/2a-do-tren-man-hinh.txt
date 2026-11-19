@@ -1,0 +1,27 @@
+AT-07 buoc 2a — do bo sung TREN MAN HINH (Chrome, 3 tab cung luc), Thu Nov 19 2026 16:09:36 GMT+0700 (Indochina Time)
+Moc 0 = luc bam 'Ngat gateway mo phong', bam NGAY SAU khi ban vua poll (truong hop xau nhat). Lay mau moi 50 ms. Ghi du ca 3 lan.
+
+Lan 1 (Bàn 01; lan lien lac cuoi truoc khi ngat 1.8 s):
+  (a) dai 'Gateway dang ngat' tren man hinh ......... 0.1 s
+  (b) ban mo phong 'Mat lien lac trung tam' .......... 8.2 s
+  (c) Tong quan, the ban 'Mat lien lac voi ban' ...... 6.4 s
+  (c) Nhat ky su kien hien dong mat lien lac .......... 7.0 s
+      (doi chieu: API ghi FAILURE table_contact_lost .. 6.5 s)
+  => DAT: cham nhat 8.2 s (gioi han 10 s)
+
+Lan 2 (Bàn 02; lan lien lac cuoi truoc khi ngat 2.0 s):
+  (a) dai 'Gateway dang ngat' tren man hinh ......... 0.1 s
+  (b) ban mo phong 'Mat lien lac trung tam' .......... 8.5 s
+  (c) Tong quan, the ban 'Mat lien lac voi ban' ...... 6.1 s
+  (c) Nhat ky su kien hien dong mat lien lac .......... 6.6 s
+      (doi chieu: API ghi FAILURE table_contact_lost .. 6.3 s)
+  => DAT: cham nhat 8.5 s (gioi han 10 s)
+
+Lan 3 (Bàn 03; lan lien lac cuoi truoc khi ngat 2.0 s):
+  (a) dai 'Gateway dang ngat' tren man hinh ......... 0.1 s
+  (b) ban mo phong 'Mat lien lac trung tam' .......... 8.2 s
+  (c) Tong quan, the ban 'Mat lien lac voi ban' ...... 6.2 s
+  (c) Nhat ky su kien hien dong mat lien lac .......... 6.7 s
+      (doi chieu: API ghi FAILURE table_contact_lost .. 6.3 s)
+  => DAT: cham nhat 8.2 s (gioi han 10 s)
+

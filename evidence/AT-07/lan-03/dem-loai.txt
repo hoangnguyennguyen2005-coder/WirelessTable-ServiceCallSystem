@@ -1,0 +1,17 @@
+﻿
+Name         Count
+----         -----
+CENTRE_START     2
+REGISTERED       5
+DUPLICATE        1
+ACKNOWLEDGED     1
+FAILURE         10
+COMPLETED        1
+DISPATCHED       2
+DELIVERED        1
+ACCEPTED         1
+RECONCILED       1
+BATTERY_LOW      1
+OVERDUE          4
+
+

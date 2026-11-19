@@ -1,0 +1,18 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.14.10, pytest-8.4.2, pluggy-1.7.0 -- D:\Projects\PBL4\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Projects\PBL4
+configfile: pytest.ini
+testpaths: backend/tests
+plugins: anyio-4.16.0
+collecting ... collected 64 items / 63 deselected / 1 selected
+
+backend/tests/test_records.py::test_no_confirmation_without_durable_commit PASSED [100%]
+
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:51
+  D:\Projects\PBL4\.venv\Lib\site-packages\starlette\testclient.py:51: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================= 1 passed, 63 deselected, 1 warning in 0.87s =================

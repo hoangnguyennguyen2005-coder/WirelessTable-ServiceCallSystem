@@ -1,60 +1,105 @@
-# Protocol v1 — proposed firmware integration contract
-**PC adapter implemented; RF/firmware proposal, not hardware-verified.** Concept C only. RF transport ACK ≠ database commit ≠ manager ACK ≠ applied LED.
+# Protocol v2 — đề xuất hợp đồng tích hợp firmware
 
-## USB PC ↔ ESP32-C3
-115200 baud,8N1 proposed default; PBL_SERIAL_PORT/PBL_SERIAL_BAUD configurable. UTF-8 newline-delimited JSON; max4096 bytes before LF, buffer bounded. Fragmented/multiple frames supported; invalid UTF8/JSON/schema/type/length discarded, parser error counter/log increments. Oversize line discarded through LF, next good frame recovers. Node disabled/unknown rejected. No raw secret logging. Reconnect1→2→4→8→16s; one worker process.
+**Phía PC đã triển khai; phần RF/firmware là đề xuất, chưa kiểm chứng trên phần cứng.** Chỉ dùng cho Concept C (logbook Step 4). Bốn sự kiện sau luôn tách biệt: RF/USB đã nhận ≠ trung tâm đã lưu bền (registered) ≠ quản lý đã xác nhận ≠ thiết bị đã hiển thị.
 
-Events validated by backend/app/domain/models.py, generated OpenAPI for HTTP equivalent:
+Thay đổi so với v1: thêm `venue_id`, loại yêu cầu `category` (SERVICE/BILL), `NODE_HELLO`, toàn bộ nhóm thiết bị nhân viên, và phản hồi ở mọi lần liên lạc. Frame `protocol_version: 1` bị từ chối.
+
+## USB PC ↔ gateway (ESP32-C3 + nRF24L01+)
+
+115200 baud 8N1 (đề xuất; đổi bằng `PBL_SERIAL_PORT`/`PBL_SERIAL_BAUD`). UTF-8 NDJSON, mỗi frame một dòng, tối đa 4096 byte trước LF. Frame bị cắt hoặc ghép nhiều dòng đều được xử lý; dòng sai JSON/schema/quá dài bị bỏ, bộ đếm lỗi tăng và ghi một sự kiện FAILURE (tối đa 30 giây một lần). Gateway chỉ làm cầu nối: giữ nguyên định danh và **không bao giờ tự tạo xác nhận đăng ký hay hoàn tất**.
+
+### Frame từ thiết bị lên PC
+
 ```json
-{"protocol_version":1,"message_type":"CALL","event_id":"1.123.7.1.CALL","node_id":1,"boot_id":123,"call_token":7,"request_id":null,"command_id":null,"payload":{}}
+{"protocol_version":2,"venue_id":1,"message_type":"CALL","event_id":"1.123.7.1.CALL","node_id":1,"boot_id":123,"call_token":7,"request_id":null,"command_id":null,"payload":{"category":"BILL"}}
 ```
-Required core: protocol_version1,message_type,event_id(1..100 safe chars),node_id1..65535,boot_id/call_token uint32. request_id UUID string (optional on first CALL); command_id for COMMAND_ACK. payload only led OFF/RED/GREEN,revision positive integer,battery_mv0..10000 as applicable. Unknown fields rejected. Device timestamps never authoritative.
 
-Types:
-- CALL: stable call_token for the whole physical call/retries; gateway assigns deterministic event_id from node+boot+token+sequence+type. Received valid CALL maps session to backend UUID. Duplicate active CALL returns same request without resetting received_at.
-- STATUS_POLL: while active only. Uses same correlation; releases current desired status. No heartbeat for sleeping idle tables.
-- DONE: same session/token, optionally backend UUID; allowed ACKNOWLEDGED/ASSIGNED/ACCEPTED. COMPLETED duplicate regenerates DONE_RECEIPT. Unknown correlation/WAITING_ACK rejected/logged. Never lookup DONE by table alone.
-- STATUS_APPLIED: payload led+revision must equal current desired state for that exact request. Only this proves LED applied (not an RF measurement). Stale status rejected.
-- DEVICE_STATUS: optional battery_mv observation; cannot prove applied LED.
-- COMMAND_ACK: command_id+node; USB gateway received only, never manager ACK or completion.
+| Trường | Ý nghĩa |
+|---|---|
+| `venue_id` | 1..65535, bắt buộc. Khác `PBL_VENUE_ID` thì bị từ chối `wrong_venue` (ER-M03). |
+| `node_id` | Địa chỉ thiết bị gửi: nút bàn hoặc thiết bị nhân viên. Một không gian địa chỉ chung, không trùng nhau. |
+| `boot_id` | uint32, định danh phiên của thiết bị; đổi sau mỗi lần khởi động lại. |
+| `call_token` | uint32, ổn định cho một lần gọi và mọi lần gửi lại của nó (chỉ nút bàn). |
+| `event_id` | 1..100 ký tự an toàn; gateway sinh ổn định từ node+boot+token+sequence+type. |
+| `request_id` / `payload.request_seq` | UUID do PC cấp, hoặc số thứ tự tiếp nhận (uint32) để dùng trên RF. |
+| `payload` | Chỉ các trường: `category`, `led`, `revision`, `battery_mv`, `battery_low`, `assignment_revision`, `request_seq`, `task`. Trường lạ bị từ chối. |
 
-Commands contain protocol_version,message_type,command_id(UUID),node_id,request_id(UUID),boot_id,call_token,payload{led,revision}. Types CALL_RECEIPT,SET_REQUEST_STATUS,DONE_RECEIPT. ERROR is direct negative response {protocol_version:1,message_type:ERROR,event_id,node_id,payload:{reason}}. Invalid unparseable lines cannot be correlated so only counted/logged.
-- DB commit finishes before CALL_RECEIPT/DONE_RECEIPT transport write.
-- Outbox stores desired state; pending→gateway_received→applied. failed(max5),expired(120s),superseded retained for audit. Attempts backoff1,2,4,8,16s, at most4 frames/contact. Radio release only when node contacts gateway, not background blasts to sleepers.
-- Poll may supersede old desired-state command with current revision; completed supersedes pending green commands. Node rejects lower revision or foreign correlation. Retries after expiry/current poll regenerate current command, never stale desired state.
-- Gateway retains short contact opportunity to reply; if unavailable, node retries CALL/DONE or polls. USB delivery counter alone never marks node applied.
-- PC reconnect reloads outbox from SQLite; node retries reconcile. Lost DONE_RECEIPT handled by DONE retry after request already closed, including after PC restart.
+Nút bàn:
+- `CALL` — bắt buộc `payload.category`. Gửi sau khi giữ đủ 5 giây. Gửi lại cùng `call_token` trả về cùng yêu cầu, không đổi thời điểm ghi nhận. CALL mới khi bàn đang có yêu cầu: trả yêu cầu hiện có, **không đổi loại, không reset thời gian** (ER-F06), ghi DUPLICATE.
+- `STATUS_POLL` — chỉ khi đang có yêu cầu hoặc giao dịch chưa xong. Bàn rảnh ngủ, không heartbeat.
+- `DONE` — bấm đúp nút ẩn. Hợp lệ với mọi yêu cầu đã ghi nhận, kể cả chưa được xác nhận hay chưa có nhân viên nhận (ER-F09). Không có correlation → từ chối `no_request_for_correlation`. Gửi lại sau khi đã đóng → gửi lại `DONE_RECEIPT`, ghi DUPLICATE.
+- `STATUS_APPLIED` — bắt buộc `led` và `revision` đúng trạng thái hiện hành. Đây là bằng chứng duy nhất rằng đèn đã đổi.
+- `NODE_HELLO` — gửi một lần sau khi khởi động lại/thay pin, trước khi nhận yêu cầu mới (ER-F05). PC trả trạng thái yêu cầu đang mở của bàn và gắn phiên mới vào yêu cầu đó; nếu không có thì trả `request_id: null`, `led: OFF`, `revision: 0`.
+- `DEVICE_STATUS` — đo pin: `battery_mv`, `battery_low`. Không chứng minh trạng thái đèn.
 
-## Full transcript (IDs abbreviated for readability)
-1. Node holds5s; gateway → CALL event E1 boot123/token7, no request_id. RF ACK alone has no effect.
-2. PC transaction inserts R1 WAITING_ACK, correlation(1,123,7),event,outbox C1 then commits. PC → CALL_RECEIPT C1 R1 RED/rev1. Gateway may COMMAND_ACK C1; node applies RED then STATUS_APPLIED R1 RED/rev1.
-3. If C1 lost: node repeats E1 with identical fields; PC returns R1 and a receipt; no second request/time reset. If event_id reused with different payload reject collision.
-4. Manager POST ack expected_version1,keyK1: transaction R1 ACKNOWLEDGED/rev2 + GREEN outbox. UI: manager confirmed, waiting for table.
-5. Active node → STATUS_POLL boot123/token7,R1. PC → SET_REQUEST_STATUS C2 GREEN/rev2. Node applies and emits STATUS_APPLIED GREEN/rev2; only now UI has applied evidence.
-6. Manager assign staff1 expected_version2 → ASSIGNED/version3,assignment_revision1. StaffDeviceAdapter inbox marks prototype delivery separately. Correct staff accept(version3,revision1) → ACCEPTED/version4; LED remains green. Wrong staff/revision conflict.
-7. Two hidden presses: node → DONE E9 boot123/token7,R1. PC commits COMPLETED/version5,closed_from ACCEPTED,supersedes green; PC → DONE_RECEIPT C9 OFF/rev5. Node turns OFF/sleeps after receipt and may confirm applied.
-8. If receipt lost, node keeps green and retries E9; PC resends OFF receipt, does not close anything again. New CALL(token8) creates R2; late E9 still maps R1 and can never close R2. Node on token8 must ignore all token7 commands.
-9. Malformed line then reconnect: parser discards through LF; valid E9 after reconnect recovers via persistent correlation/dedup/outbox.
+Gateway:
+- `COMMAND_ACK` — `command_id` + `node_id` đích. Chỉ nghĩa là gateway đã nhận qua USB.
 
-## RF gateway ↔ Pro Mini: 28-byte proposal
-Not the USB JSON string: nRF24L01+ maximum payload32bytes. All multi-byte integers little-endian. Node id/config/pins/channel/address/speed/CRC radio settings require firmware owner approval; none invented here.
-| Offset | Bytes | Type | Meaning |
+Thiết bị nhân viên (luôn gửi `boot_id`; `call_token` bỏ qua):
+- `STAFF_POLL` — liên lạc định kỳ (đề xuất 2 giây), có thể kèm pin.
+- `STAFF_APPLIED` — thiết bị báo đang hiển thị gì: `payload.task` = `SHOWN` (biên nhận giao việc), `ACCEPTED`, `CLEARED`; kèm `assignment_revision` và `request_id` hoặc `request_seq`.
+- `STAFF_ACCEPT` — người dùng bấm nhận, kèm `assignment_revision`. Phiên giao đã cũ → từ chối `stale_assignment` và PC gửi `DISPATCH_CANCEL`.
+
+### Frame từ PC xuống thiết bị
+
+Chung: `protocol_version`, `venue_id`, `message_type`, `command_id` (UUID, hoặc `null` với phản hồi không cần theo dõi), `node_id`, `request_id`, `payload`.
+
+| Loại | Đích | Payload |
+|---|---|---|
+| `CALL_RECEIPT` | nút bàn | `led`, `revision`, `category`, `request_seq`, kèm `boot_id`/`call_token`. **Chỉ gửi sau khi commit.** |
+| `SET_REQUEST_STATUS` | nút bàn | như trên; trả lời poll/hello |
+| `DONE_RECEIPT` | nút bàn | `led: OFF`; xác nhận hoàn tất |
+| `DISPATCH` | thiết bị NV | `table_id`, `table_name`, `category`, `assignment_revision`, `request_seq`, `task: SHOWN` |
+| `ACCEPT_RECEIPT` | thiết bị NV | như trên, `task: ACCEPTED` |
+| `DISPATCH_CANCEL` | thiết bị NV | như trên, `task: CLEARED`, `reason`: reassigned/cancelled/completed/stale |
+| `STAFF_STATUS` | thiết bị NV | `open_tasks`; phản hồi giữ liên lạc |
+| `ERROR` | bất kỳ | `event_id`, `payload.reason` |
+
+Quy tắc:
+- **Mỗi lần liên lạc đều có phản hồi mức ứng dụng**, để thiết bị phân biệt trung tâm còn sống với ACK radio (ER-F03, ER-R03). Khi thiết bị đã xác nhận trạng thái hiện hành, phản hồi có `command_id: null` và không tạo dòng outbox.
+- Lệnh có `command_id` nằm trong outbox: `pending → gateway_received → applied`; `failed` sau 5 lần (lùi 1, 2, 4, 8, 16 giây), `expired` sau 120 giây, `superseded` khi trạng thái đổi. Chỉ phát khi thiết bị đích liên lạc, tối đa 4 frame mỗi lần.
+- Nút bàn chỉ nhận frame đúng `boot_id`/`call_token` của mình và `revision` không giảm. `revision` chỉ tăng khi đèn phải đổi: ghi nhận (đỏ) → xác nhận (xanh) → hoàn tất (tắt). Giao việc và nhận việc không đổi `revision`.
+- Thiết bị nhân viên đặt task theo `payload.task`; frame lặp không tạo task mới. Khi `boot_id` đổi, PC gửi lại toàn bộ việc đang mở.
+
+## Phiên mẫu
+
+1. Khách giữ nút Thanh toán 5 giây. Gateway → `CALL` (boot 123, token 7, BILL).
+2. PC ghi yêu cầu R1 (`seq` 1, REGISTERED), correlation, sự kiện REGISTERED rồi commit. PC → `CALL_RECEIPT` RED/rev 1. Nút sáng đỏ liên tục, gửi `STATUS_APPLIED` RED/1.
+3. Mất `CALL_RECEIPT`: nút gửi lại `CALL` (mỗi giây trong 5 giây đầu). PC trả lại R1, ghi DUPLICATE. Quá 5 giây chưa có xác nhận: nút hiển thị "chưa xác nhận" và tiếp tục gửi lại cùng định danh.
+4. Quản lý bấm Xác nhận → ACKNOWLEDGED/rev 2. Lần poll kế tiếp PC → `SET_REQUEST_STATUS` GREEN/2; nút → `STATUS_APPLIED` GREEN/2.
+5. Quản lý giao cho nhân viên 1 (thiết bị 101) → phiên giao 1. `STAFF_POLL` kế tiếp nhận `DISPATCH`; thiết bị rung, hiển thị bàn và loại, gửi `STAFF_APPLIED` SHOWN → trung tâm ghi DELIVERED.
+6. Nhân viên bấm nhận → `STAFF_ACCEPT` rev 1 → trung tâm ghi ACCEPTED, trả `ACCEPT_RECEIPT`. Đèn bàn không đổi.
+7. Bấm đúp nút ẩn → `DONE`. PC đóng R1, gỡ việc khỏi thiết bị nhân viên (`DISPATCH_CANCEL` reason completed), trả `DONE_RECEIPT` OFF/rev 3. Nút tắt đèn, ngủ.
+8. Mất `DONE_RECEIPT`: nút giữ trạng thái "chờ xác nhận hoàn tất" và gửi lại `DONE`; PC không đóng thêm gì.
+9. Cuộc gọi mới dùng token 8 → R2. `DONE` cũ (token 7) chỉ ánh xạ về R1, không bao giờ đóng R2.
+
+Bước 5–6 có thể diễn ra trước bước 4: giao việc không cần xác nhận trước, và không làm đèn chuyển xanh.
+
+## RF gateway ↔ thiết bị: frame 31 byte (đề xuất)
+
+nRF24L01+ giới hạn payload 32 byte nên không gửi JSON qua RF. Số nhiều byte theo little-endian. Kênh, địa chỉ pipe, tốc độ, CRC radio do người viết firmware quyết định.
+
+| Offset | Byte | Kiểu | Ý nghĩa |
 |---|---:|---|---|
-|0|1|u8|protocol version1|
-|1|1|u8|kind:1CALL,2POLL,3DONE,4APPLIED,5STATUS,16CALL_RECEIPT,17SET_STATUS,18DONE_RECEIPT,255ERROR|
-|2|2|u16|node_id|
-|4|4|u32|boot/session id persisted, non-reused|
-|8|4|u32|call_token stable through CALL→DONE retries|
-|12|2|u16|event sequence; retry identical event keeps sequence|
-|14|4|u32|backend request version;0 before first receipt|
-|18|1|u8|LED0OFF/1RED/2GREEN; not business ACK|
-|19|1|u8|flags:bit0 battery valid;other bits0|
-|20|2|u16|battery_mV when valid,else0|
-|22|4|u32|gateway command tag,0 for unsolicited event|
-|26|2|u16|proposed app CRC16-CCITT-FALSE of bytes0..25 (poly0x1021/init0xffff); verify with firmware|
-Total28 ≤32. CRC proposal is additional to radio hardware CRC, not a measured requirement.
+| 0 | 1 | u8 | protocol version = 2 |
+| 1 | 1 | u8 | kind: 1 CALL, 2 POLL, 3 DONE, 4 APPLIED, 5 STATUS, 6 HELLO, 8 STAFF_POLL, 9 STAFF_APPLIED, 10 STAFF_ACCEPT, 16 CALL_RECEIPT, 17 SET_STATUS, 18 DONE_RECEIPT, 24 DISPATCH, 25 ACCEPT_RECEIPT, 26 DISPATCH_CANCEL, 27 STAFF_STATUS, 255 ERROR |
+| 2 | 2 | u16 | venue_id |
+| 4 | 2 | u16 | device id (nút bàn hoặc thiết bị nhân viên) |
+| 6 | 4 | u32 | boot/session id |
+| 10 | 4 | u32 | nút bàn: call_token · nhân viên: request_seq |
+| 14 | 2 | u16 | event sequence; gửi lại giữ nguyên |
+| 16 | 4 | u32 | nút bàn: LED revision · nhân viên: assignment_revision |
+| 20 | 1 | u8 | nút bàn: LED 0 OFF/1 RED/2 GREEN · nhân viên: task 1 SHOWN/2 ACCEPTED/3 CLEARED |
+| 21 | 1 | u8 | category: 0 không có, 1 SERVICE, 2 BILL |
+| 22 | 1 | u8 | flags: bit0 có số đo pin, bit1 pin yếu |
+| 23 | 2 | u16 | battery mV, hoặc table_id trong DISPATCH |
+| 25 | 4 | u32 | gateway command tag; 0 nếu không theo dõi |
+| 29 | 2 | u16 | CRC16-CCITT-FALSE của byte 0..28 (đề xuất, bổ sung cho CRC radio) |
 
-Mapping: gateway maintains tag↔command_id and (node,boot,token)↔request UUID from PC receipt. Table node never needs UUID on RF. If gateway restarts, tuple on next POLL resolves at backend even without request_id; command creates fresh tag map. Backend event_id derived tuple+sequence+kind; gateway must not include unstable transport metadata in retry. COMMAND_ACK carries UUID on USB, separate from RF event sequence. Sequence uint16 must not wrap within same call: firmware renews session safely before exhaustion, never reuses tuple. Version32 wrap must be prevented by maintenance rather than truncation. Persistent boot/token allocation and wear/power-loss strategy still require firmware validation. If node loses correlation mid-call, it must seek reconciliation/operator recovery; never issue DONE with invented current correlation.
+Tổng 31 ≤ 32 byte. Gateway giữ ánh xạ tag ↔ `command_id` và (node, boot, token) ↔ UUID; nút bàn không cần UUID. Thiết bị nhân viên dùng `request_seq` nên gateway không cần bảng ánh xạ cho chúng. Tên bàn không đi qua RF: thiết bị hiển thị `table_id`.
 
-## Staff boundary
-PrototypeStaffAdapter implements StaffDeviceAdapter.inbox/accept; assignment delivery timestamp distinct from human acceptance. Hardware endpoint requires X-Staff-Token mapped server-side to PBL_STAFF_ID; simulation selector has no security claim. Future physical adapter must present verified staff identity and current assignment revision to same service. No complete action exists in staff protocol.
+Trả lời qua ACK payload chỉ an toàn khi biết chắc người nhận; với pipe dùng chung, gateway phải gửi phản hồi có địa chỉ trong cửa sổ nhận của thiết bị (logbook Step 5 "Return scheduling"). Chu kỳ poll 5 giây là giả định của mô hình năng lượng, không phải yêu cầu.
+
+## Ranh giới thiết bị nhân viên
+
+Sản phẩm dùng thiết bị cầm tay chuyên dụng qua gateway (C-04, C-06), không dùng điện thoại cá nhân. `backend/app/adapters/staff.py` cung cấp thiết bị ảo phát đúng các frame trên: dùng cho simulator, và làm stub chẩn đoán ở chế độ phần cứng khi đặt `PBL_STAFF_TOKEN` (bound với `PBL_STAFF_ID`, qua `/api/staff-device/{id}`). Không có thao tác hoàn tất trong giao thức nhân viên.

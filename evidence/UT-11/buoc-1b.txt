@@ -1,0 +1,15 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.14.10, pytest-8.4.2, pluggy-1.7.0 -- D:\Projects\PBL4\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Projects\PBL4
+configfile: pytest.ini
+plugins: anyio-4.16.0
+collecting ... collected 1 item
+
+evidence/UT-11/ut11_completion_fault.py::test_failed_completion_commit_gives_no_done_receipt 
+Sau commit loi: so yeu cau mo = 1 | trang thai = REGISTERED
+Gui lai DONE -> ['DONE_RECEIPT'] {'category': 'BILL', 'led': 'OFF', 'request_seq': 1, 'revision': 2}
+Nhat ky: ['REGISTERED', 'COMPLETED']
+PASSED
+
+============================== 1 passed in 0.45s ==============================

@@ -1,0 +1,27 @@
+AT-07 buoc 2a — do bo sung TREN MAN HINH (Chrome, 3 tab cung luc), Thu Nov 19 2026 15:46:36 GMT+0700 (Indochina Time)
+Moc 0 = luc bam 'Ngat gateway mo phong'. Lay mau moi 50 ms. Ghi du ca 3 lan, khong bo lan nao.
+
+Lan 1 (Bàn 01; lan lien lac cuoi truoc khi ngat 2.5 s):
+  (a) dai 'Gateway dang ngat' tren man hinh ......... 0.1 s
+  (b) ban mo phong 'Mat lien lac trung tam' .......... 7.8 s
+  (c) Tong quan, the ban 'Mat lien lac voi ban' ...... 6.6 s
+  (c) Nhat ky su kien hien dong mat lien lac .......... KHONG THAY trong 20 s
+      (doi chieu: API ghi FAILURE table_contact_lost .. 6.9 s)
+  => KHONG DAT: cham nhat KHONG THAY trong 20 s (gioi han 10 s)
+
+Lan 2 (Bàn 02; lan lien lac cuoi truoc khi ngat 3.5 s):
+  (a) dai 'Gateway dang ngat' tren man hinh ......... 0.1 s
+  (b) ban mo phong 'Mat lien lac trung tam' .......... 6.7 s
+  (c) Tong quan, the ban 'Mat lien lac voi ban' ...... 5.5 s
+  (c) Nhat ky su kien hien dong mat lien lac .......... KHONG THAY trong 20 s
+      (doi chieu: API ghi FAILURE table_contact_lost .. 5.5 s)
+  => KHONG DAT: cham nhat KHONG THAY trong 20 s (gioi han 10 s)
+
+Lan 3 (Bàn 03; lan lien lac cuoi truoc khi ngat 2.6 s):
+  (a) dai 'Gateway dang ngat' tren man hinh ......... 0.1 s
+  (b) ban mo phong 'Mat lien lac trung tam' .......... 7.8 s
+  (c) Tong quan, the ban 'Mat lien lac voi ban' ...... 6.8 s
+  (c) Nhat ky su kien hien dong mat lien lac .......... KHONG THAY trong 20 s
+      (doi chieu: API ghi FAILURE table_contact_lost .. 6.8 s)
+  => KHONG DAT: cham nhat KHONG THAY trong 20 s (gioi han 10 s)
+

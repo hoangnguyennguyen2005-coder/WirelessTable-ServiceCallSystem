@@ -1,0 +1,21 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.14.10, pytest-8.4.2, pluggy-1.7.0 -- D:\Projects\PBL4\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\Projects\PBL4
+configfile: pytest.ini
+testpaths: backend/tests
+plugins: anyio-4.16.0
+collecting ... collected 64 items / 60 deselected / 4 selected
+
+backend/tests/test_adapters.py::test_failed_node_does_not_block_other_tables_or_invent_calls PASSED [ 25%]
+backend/tests/test_domain.py::test_event_collision_unknown_node_venue_and_idempotency PASSED [ 50%]
+backend/tests/test_domain.py::test_dispatch_delivery_and_acceptance_are_distinct PASSED [ 75%]
+backend/tests/test_domain.py::test_node_restart_reconciles_before_new_request PASSED [100%]
+
+============================== warnings summary ===============================
+.venv\Lib\site-packages\starlette\testclient.py:51
+  D:\Projects\PBL4\.venv\Lib\site-packages\starlette\testclient.py:51: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================= 4 passed, 60 deselected, 1 warning in 2.93s =================

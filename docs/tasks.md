@@ -1,23 +1,30 @@
-# MVP tasks — execution 2026-11-06
-Sequential implementation authorized by supplied request; artifacts docs/ per explicit destination. Check only with evidence in verification.md.
-## A — specification
-- [x] T001 Inspect repo and preserve source request in docs/requirements-source.txt; no logbook exists.
-- [x] T002 Specify US1–US5/FR001–010 in docs/spec.md, architecture.md,state-machine.md,assumptions.md; cross-check against source.
-## B — domain (depends A)
-- [x] T003 [US1] backend/app/db/store.py schema/version/index/seed; FR001/004/008, restart+concurrency checks.
-- [x] T004 [US1–3] backend/app/domain/models.py,service.py lifecycle/idempotency/outbox; FR001–004, transition tests.
-- [x] T005 [US1–5] backend/app/main.py,config.py API/SSE/security/worker; FR005/009, API checks.
-## C — UI (depends B)
-- [x] T006 [US2] frontend/src/App.tsx,api.ts,styles.css manager/staff/pending/reconnect; FR005, desktop/mobile checks.
-## D — transports (depends B,C)
-- [x] T007 [US1,3,5] backend/app/adapters/simulator.py,serial_gateway.py,staff.py polling/hold/double press/retries; FR003/006/007, adapter tests.
-- [x] T008 [US5] tools/serial_emulator.py,docs/protocol.md,hardware-integration.md; FR007, PTY/emulator checks.
-## E — completion (depends B–D)
-- [x] T009 [US4] History/config/CSV/stats + tools/backup.py; FR008, API/export checks.
-- [x] T010 [US1–5] backend/tests/*,frontend/tests/e2e.spec.ts; FR010/SC001–004 test/typecheck/lint/build.
-- [x] T011 README.md,tools/demo.py,.env.example,docs/verification.md run/demo/limits; SC001–004.
-- [x] T012 Convergence compare all source requirements against actual code, append remediations if needed.
+# Tiến độ
 
-Execution evidence 2026-11-06: docs/verification.md. T003–T011 implementation pass executed over this task set; pytest20, Chromium E2E3, typecheck/lint/format/build passed. Hardware checks explicitly excluded from PC software completion and listed in docs/hardware-integration.md.
+## Đợt 1 — MVP theo bản yêu cầu ban đầu (2026-11-06)
 
-Convergence review (read-only) completed 2026-11-06 against current sources, source requirements and verification evidence: no additional software remediation task identified. Returned to implementation bookkeeping to record T012 completion. All firmware/physical measurements remain handover validation items, not claimed passed.
+Hoàn thành khi chưa có logbook: một loại yêu cầu, luồng xác nhận → giao → nhận → hoàn tất trên web nhân viên, giao thức v1. Chi tiết nằm trong lịch sử git.
+
+## Đợt 2 — chỉnh theo logbook ECE411 (2026-11-17)
+
+- [x] Đọc logbook Step 1–6; lấy 33 ER, 9 ràng buộc, kế hoạch test làm nguồn có hiệu lực.
+- [x] Mô hình: vòng đời `REGISTERED → ACKNOWLEDGED → COMPLETED` tách khỏi giao việc; loại Service/Bill; `seq` FIFO.
+- [x] Schema v2 và migrate v1 tại chỗ có sao lưu; database gắn `venue_id`.
+- [x] Giao thức v2: `venue_id`, category, NODE_HELLO, kênh thiết bị nhân viên, phản hồi cho mọi lần liên lạc.
+- [x] DONE hợp lệ trước khi xác nhận; nhắc từ ≥300 giây; cửa sổ bấm đúp mặc định 1000 ms.
+- [x] Nhật ký 8 loại sự kiện, lưu ≥30 ngày, `/api/events.csv`.
+- [x] Cờ "chưa giải quyết" (10 giây), cảnh báo pin yếu.
+- [x] Thiết bị nhân viên ảo thay cho trang web nhân viên; stub có token ở chế độ phần cứng.
+- [x] Simulator: hai nút, mẫu đèn, khởi động lại nút, pin, lỗi giả lập.
+- [x] Giao diện: tổng quan, chi tiết, bàn mô phỏng, thiết bị nhân viên, lịch sử + nhật ký, cấu hình.
+- [x] `tools/serial_emulator.py` viết lại cho v2, chạy được trên Windows với `--port`.
+- [x] Test: 61 pytest + 3 E2E; tài liệu viết lại, thêm `traceability.md`.
+- [x] 2026-11-19: chạy UT-11, UT-12, AT-07 (mô phỏng) theo hướng dẫn test; sửa 6 lỗi tìm thấy (`verification.md`). 63 pytest + 3 E2E.
+
+## Còn mở
+
+- [ ] Tìm nguyên nhân một lần hỏng không tái hiện được của test emulator loopback (`verification.md`).
+- [ ] Chạy lại test PTY trên Linux với giao thức v2.
+- [ ] Thống nhất với nhóm firmware các điểm ở cuối `hardware-integration.md`.
+- [ ] Thực hiện các phiếu IT/AT của logbook khi có phần cứng (AT-07: các dòng 1a radio, 2a USB/RF, 4 nút thật, 5b mất điện thật).
+- [ ] Nhóm firmware chốt mốc báo "chưa xác nhận đăng ký": hiện đúng 5,0 s, không có khoảng dư so với ER-R03.
+- [ ] Chốt các giá trị PROPOSED sau khi thử với người dùng (`assumptions.md`).

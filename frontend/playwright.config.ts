@@ -14,6 +14,8 @@ export default defineConfig({
   use: {
     baseURL: "http://127.0.0.1:8000",
     headless: true,
+    // PBL_E2E_CHANNEL=chrome|msedge uses an installed browser instead of Playwright's download.
+    channel: process.env.PBL_E2E_CHANNEL || undefined,
     launchOptions: {
       executablePath: existsSync("/usr/bin/chromium")
         ? "/usr/bin/chromium"

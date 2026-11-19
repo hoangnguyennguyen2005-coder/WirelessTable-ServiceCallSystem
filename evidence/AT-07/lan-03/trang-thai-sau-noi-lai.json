@@ -1,0 +1,491 @@
+{
+  "venue_id": 1,
+  "tables": [
+    {
+      "id": 1,
+      "node_id": 1,
+      "name": "Bàn 01",
+      "enabled": 1,
+      "last_seen": 1795078741.3711534,
+      "led": "GREEN",
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": "ce6115f5-aac5-4196-98d2-09b4c7e51aa6",
+      "observed_revision": 2
+    },
+    {
+      "id": 2,
+      "node_id": 2,
+      "name": "Bàn 02",
+      "enabled": 1,
+      "last_seen": 1795078685.5919604,
+      "led": "OFF",
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": "d2613349-191f-422e-9647-ca6b62b02e70",
+      "observed_revision": 2
+    },
+    {
+      "id": 3,
+      "node_id": 3,
+      "name": "Bàn 03",
+      "enabled": 1,
+      "last_seen": 1795078737.644568,
+      "led": "RED",
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": "9e9ddc7d-f511-4290-a695-4c5a35b1f542",
+      "observed_revision": 1
+    },
+    {
+      "id": 4,
+      "node_id": 4,
+      "name": "Bàn 04",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 5,
+      "node_id": 5,
+      "name": "Bàn 05",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 6,
+      "node_id": 6,
+      "name": "Bàn 06",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 7,
+      "node_id": 7,
+      "name": "Bàn 07",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 8,
+      "node_id": 8,
+      "name": "Bàn 08",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 9,
+      "node_id": 9,
+      "name": "Bàn 09",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 10,
+      "node_id": 10,
+      "name": "Bàn 10",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 11,
+      "node_id": 11,
+      "name": "Bàn 11",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 12,
+      "node_id": 12,
+      "name": "Bàn 12",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 13,
+      "node_id": 13,
+      "name": "Bàn 13",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 14,
+      "node_id": 14,
+      "name": "Bàn 14",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 15,
+      "node_id": 15,
+      "name": "Bàn 15",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 16,
+      "node_id": 16,
+      "name": "Bàn 16",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 17,
+      "node_id": 17,
+      "name": "Bàn 17",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 18,
+      "node_id": 18,
+      "name": "Bàn 18",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 19,
+      "node_id": 19,
+      "name": "Bàn 19",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 20,
+      "node_id": 20,
+      "name": "Bàn 20",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 21,
+      "node_id": 21,
+      "name": "Bàn 21",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 22,
+      "node_id": 22,
+      "name": "Bàn 22",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 23,
+      "node_id": 23,
+      "name": "Bàn 23",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 24,
+      "node_id": 24,
+      "name": "Bàn 24",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    }
+  ],
+  "staff": [
+    {
+      "id": 1,
+      "name": "Minh Anh",
+      "active": 1,
+      "available": 1,
+      "device_id": 101,
+      "last_seen": 1795078740.4088006,
+      "battery_mv": null,
+      "battery_low": 0
+    },
+    {
+      "id": 2,
+      "name": "Quốc Bảo",
+      "active": 1,
+      "available": 1,
+      "device_id": 102,
+      "last_seen": 1795078730.3440468,
+      "battery_mv": null,
+      "battery_low": 0
+    }
+  ],
+  "requests": [
+    {
+      "id": "ce6115f5-aac5-4196-98d2-09b4c7e51aa6",
+      "table_id": 1,
+      "state": "ACKNOWLEDGED",
+      "received_at": 1795078635.1980996,
+      "acknowledged_at": 1795078642.5706081,
+      "staff_id": 1,
+      "assignment_revision": 1,
+      "accepted_at": 1795078730.2292848,
+      "completed_at": null,
+      "reminded_at": null,
+      "version": 4,
+      "closed_from": null,
+      "seq": 1,
+      "category": "SERVICE",
+      "dispatched_at": 1795078686.0235846,
+      "delivered_at": 1795078686.8774676,
+      "led_revision": 2,
+      "led_changed_at": 1795078642.5706081,
+      "table_command": {
+        "type": "SET_REQUEST_STATUS",
+        "status": "applied",
+        "attempts": 1,
+        "error": null,
+        "applied_at": 1795078645.3403141
+      },
+      "staff_command": {
+        "type": "ACCEPT_RECEIPT",
+        "status": "applied",
+        "attempts": 1,
+        "error": null,
+        "applied_at": 1795078730.3039124
+      }
+    },
+    {
+      "id": "9e9ddc7d-f511-4290-a695-4c5a35b1f542",
+      "table_id": 3,
+      "state": "REGISTERED",
+      "received_at": 1795078681.8855195,
+      "acknowledged_at": null,
+      "staff_id": 2,
+      "assignment_revision": 1,
+      "accepted_at": null,
+      "completed_at": null,
+      "reminded_at": null,
+      "version": 2,
+      "closed_from": null,
+      "seq": 3,
+      "category": "SERVICE",
+      "dispatched_at": 1795078731.2548456,
+      "delivered_at": null,
+      "led_revision": 1,
+      "led_changed_at": 1795078681.8855195,
+      "table_command": {
+        "type": "CALL_RECEIPT",
+        "status": "applied",
+        "attempts": 1,
+        "error": null,
+        "applied_at": 1795078681.9599442
+      },
+      "staff_command": {
+        "type": "DISPATCH",
+        "status": "pending",
+        "attempts": 0,
+        "error": null,
+        "applied_at": null
+      }
+    }
+  ],
+  "limits": {
+    "hold_seconds": 5,
+    "registration_seconds": 5,
+    "reminder_seconds": 300,
+    "unresolved_seconds": 10,
+    "table_contact_seconds": 8,
+    "staff_contact_seconds": 8,
+    "poll_seconds": 5,
+    "staff_poll_seconds": 2,
+    "retention_days": 90
+  },
+  "now": 1795078742.0683322,
+  "mode": "simulation",
+  "gateway": {
+    "connected": true,
+    "error": null
+  },
+  "simulator": {
+    "connected": true,
+    "fault": "none",
+    "fault_node": null,
+    "delay": 0,
+    "poll_seconds": 5,
+    "double_ms": 1000,
+    "nodes": [
+      {
+        "node_id": 1,
+        "phase": "active",
+        "pattern": "green",
+        "led": "GREEN",
+        "category": "SERVICE",
+        "hold_at": null,
+        "request_id": "ce6115f5-aac5-4196-98d2-09b4c7e51aa6",
+        "pending": null,
+        "press_armed": false,
+        "battery_low": false,
+        "error": null
+      },
+      {
+        "node_id": 2,
+        "phase": "sleep",
+        "pattern": "off",
+        "led": "OFF",
+        "category": null,
+        "hold_at": null,
+        "request_id": "d2613349-191f-422e-9647-ca6b62b02e70",
+        "pending": null,
+        "press_armed": false,
+        "battery_low": false,
+        "error": null
+      },
+      {
+        "node_id": 3,
+        "phase": "active",
+        "pattern": "red",
+        "led": "RED",
+        "category": "SERVICE",
+        "hold_at": null,
+        "request_id": "9e9ddc7d-f511-4290-a695-4c5a35b1f542",
+        "pending": null,
+        "press_armed": false,
+        "battery_low": false,
+        "error": null
+      }
+    ],
+    "staff_devices": [
+      {
+        "staff_id": 1,
+        "device_id": 101,
+        "powered": true,
+        "source": "simulator",
+        "vibrating": false,
+        "link_lost": false,
+        "error": null,
+        "tasks": [
+          {
+            "request_id": "ce6115f5-aac5-4196-98d2-09b4c7e51aa6",
+            "request_seq": 1,
+            "table_id": 1,
+            "table_name": "Bàn 01",
+            "category": "SERVICE",
+            "revision": 1,
+            "state": "ACCEPTED",
+            "shown_at": 1795078686.8121102
+          }
+        ]
+      },
+      {
+        "staff_id": 2,
+        "device_id": 102,
+        "powered": false,
+        "source": "simulator",
+        "vibrating": false,
+        "link_lost": false,
+        "error": null,
+        "tasks": []
+      }
+    ]
+  },
+  "staff_stub": false,
+  "double_ms": 1000,
+  "generation": 112,
+  "stats": {
+    "completed": 1,
+    "average_seconds": 44.77863931655884
+  }
+}

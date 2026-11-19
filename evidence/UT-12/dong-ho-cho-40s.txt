@@ -1,0 +1,2 @@
+Do dai 40 s, 4 dong ho, lay mau 100 ms; tua +300 s o giay 20 (khong tinh buoc nhay do tua).
+So lan doi gia tri: 157; so lan KHONG phai +1: 0

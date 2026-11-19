@@ -1,0 +1,75 @@
+16:06:52.696  Bat dau AT-07 (dien tap mo phong, tu dong bang Chrome/Playwright)
+16:06:53.534     [0] DAT      Server khởi động (data-at07)
+16:06:53.794     [0] DAT      Tổng quan có 24 bàn rảnh, trung tâm trực tuyến — 24 bàn rảnh
+16:06:54.067     0: Đã sao lưu sổ: sao-luu-truoc.sqlite3
+16:06:54.324  1a ngat
+16:06:59.557  1a tha nut
+16:07:09.677     1a: Đèn bàn 01 sau khi thả: 0.0s pending → 5.0s unconfirmed/registering
+16:07:09.678     [1a] KHONG DAT Trong 5 s sau khi thả có kết quả nhìn thấy (chưa xác nhận) — “Chưa xác nhận được đăng ký” sau 5.0 s
+16:07:09.679     [1a] DAT      Không bao giờ đỏ sáng khi trung tâm chưa ghi
+16:07:09.679     [1a] DAT      Không có yêu cầu nào khi đang ngắt — tối đa 0
+16:07:09.834  1a noi lai
+16:07:14.946     [1a] DAT      Nối lại → đỏ sáng, đúng 1 yêu cầu Bàn 01 — đỏ sáng sau 5.1 s; 1 yêu cầu
+16:07:15.201     [1b] DAT      Lỗi được gắn cho Bàn 02 — fault=drop_receipt, bàn=2
+16:07:20.421  1b
+16:07:21.515     [1b] DAT      Bàn 02 tự gửi lại rồi đỏ sáng — sau 1.1 s
+16:07:21.516     [1b] DAT      Chỉ 1 yêu cầu Bàn 02, loại Thanh toán — 1 yêu cầu, BILL
+16:07:21.517     [1b] DAT      Nhật ký: REGISTERED rồi DUPLICATE — REGISTERED, DUPLICATE
+16:07:21.517     [1b] DAT      Lỗi giả lập chỉ dùng một lần — fault = none
+16:07:25.116     [2a] DAT      Trước khi ngắt: bàn báo đèn xanh
+16:07:25.256  2a ngat
+16:07:35.023     2a: (a) dải Gateway đang ngắt: 0.1 s; (b) Bàn 01 “Mất liên lạc”: 9.8 s; (c) nhật ký table_contact_lost: 8.3 s
+16:07:35.024     [2a] DAT      (a) Dải “Gateway đang ngắt” hiện ngay — 0.1 s
+16:07:35.025     [2a] DAT      (b) Bàn 01 hiện mất liên lạc trong 10 s — 9.8 s
+16:07:35.025     [2a] DAT      (c) Nhật ký có table_contact_lost trong 10 s — 8.3 s
+16:07:35.026     [2a] DAT      Bàn 01 giữ xanh, không yêu cầu nào bị đóng
+16:07:41.587  2a ban 03 goi khi dang ngat
+16:07:49.683     [2a] DAT      Bàn 03 gọi khi đang ngắt → chưa xác nhận trong 5 s, không đỏ, không có yêu cầu — 0.0s pending → 5.0s unconfirmed/registering; 0 yêu cầu
+16:07:50.054  2b bam dup
+16:08:00.110     2b: Đèn bàn 02: 0.0s completing
+16:08:00.112     [2b] DAT      Khi đang ngắt: chờ trung tâm, không về “đèn tắt”
+16:08:00.113     [2b] DAT      Yêu cầu Bàn 02 vẫn mở suốt lúc ngắt
+16:08:00.303  2b noi lai
+16:08:00.449     [2b] DAT      Nối lại → đèn tắt, Bàn 02 rời Tổng quan, lịch sử Hoàn tất, đóng đúng 1 lần — tắt sau 0.1 s; 1 COMPLETED
+16:08:01.924     2b: Bàn 03 (gọi lúc đang ngắt) được ghi nhận sau khi nối lại: có
+16:08:33.343     [2c] DAT      Máy nhân viên (Minh Anh) hiện việc Bàn 01 và nút Nhận việc
+16:08:33.523  2c ngat
+16:08:33.546  2c bam nhan
+16:08:43.783     [2c] DAT      Máy nhân viên hiện “Đã bấm nhận · đang chờ trung tâm xác nhận.”
+16:08:43.785     [2c] DAT      Trung tâm không tự coi là đã nhận khi đang ngắt (10 s)
+16:08:43.970     [2c] DAT      Chi tiết Bàn 01 vẫn “Chờ nhân viên nhận”
+16:08:44.248  2c noi lai
+16:08:45.976     [2c] DAT      Nối lại → trung tâm ghi nhận đã nhận — sau 1.7 s
+16:08:46.184     [2c] DAT      Quản lý thấy “Nhân viên đã nhận lúc …”
+16:08:46.383     [2c] DAT      Máy nhân viên hướng dẫn bấm đúp tại bàn, không có nút Hoàn tất
+16:08:46.529  2c tat nguon thiet bi nhan vien 2
+16:08:55.004     [2c] DAT      Giao cho máy đang tắt → “Chưa tới thiết bị nhân viên” — sau 8.3 s
+16:08:55.223     [3] DAT      Sau nối lại: các yêu cầu cũ giữ nguyên mã, số thứ tự, giờ gọi, loại — Bàn 1 #1
+16:08:55.224     [3] DAT      Không bàn nào có 2 yêu cầu — {"1":1,"3":1}
+16:08:55.224     [3] DAT      Hàng đợi vẫn theo số thứ tự tăng dần — 1,3
+16:09:00.483  3 ban 02 goi lan moi
+16:09:00.550     [3] DAT      Bàn 02 gọi lần mới → mã mới, số thứ tự mới — #2 → #4
+16:09:00.817  4 khoi dong lai ban 01
+16:09:06.057  4 ban 04 goi
+16:09:15.896     4: Đèn bàn 01 sau khởi động lại: 0.1s green
+16:09:15.967     4: Nhật ký: RECONCILED (node_restart); trạng thái “đang đối soát” không bắt được ở nhịp lấy mẫu 0,1 s
+16:09:15.968     [4] DAT      Bàn 01 khởi động lại đã đối soát với trung tâm (RECONCILED, phiên mới) — node_restart
+16:09:15.969     [4] DAT      Bàn 01 về đúng yêu cầu cũ (cùng mã, loại, giờ), đèn xanh, không tạo cuộc gọi mới
+16:09:15.969     [4] DAT      Bàn 04 gọi bình thường trong lúc đó
+16:09:16.129     [4] DAT      Pin yếu Bàn 01 hiện tại trung tâm
+16:09:16.435     5a: Trước khi tắt: Bàn 1: ACKNOWLEDGED/ACCEPTED; Bàn 3: REGISTERED/DISPATCHED; Bàn 2: REGISTERED/NONE; Bàn 4: REGISTERED/NONE
+16:09:16.566  5a tat ngang
+16:09:17.298     [5a] DAT      Server đã bị tắt ngang
+16:09:17.311  5a mo lai
+16:09:18.496     5a: Mở lại: API sẵn sàng sau 1.0 s, trang quản lý dùng lại được sau 1.1 s (tính từ lúc chạy lại lệnh); recovered_active = 4, recovery_ms = 73
+16:09:18.497     [5a] DAT      Mọi yêu cầu quay lại đủ, đúng mã/số/giờ/trạng thái, không trùng, không đóng nhầm — 4 trước / 4 sau
+16:09:18.505     [5a] DAT      Nhật ký có “Trung tâm khởi động” sau lần mở lại
+16:09:19.657  6 xuat CSV
+16:09:19.659     6: Cột CSV: id, time, epoch, event, table_id, table_name, category, request_seq, request_id, staff_id, staff_name, source, actor, detail
+16:09:19.660     6: Số dòng mỗi loại: CENTRE_START=2, REGISTERED=5, DUPLICATE=1, ACKNOWLEDGED=1, FAILURE=10, COMPLETED=1, DISPATCHED=2, DELIVERED=1, ACCEPTED=1, RECONCILED=1, BATTERY_LOW=1, OVERDUE=4
+16:09:19.662     [6] DAT      Đủ 8 loại sự kiện — đủ
+16:09:19.663     [6] DAT      Giờ theo ISO 8601 +07:00
+16:09:19.664     [6] DAT      Còn các dòng từ trước lần tắt ngang
+16:09:19.665     [6] DAT      Không có cột thông tin khách
+16:09:20.212  Ket thuc AT-07
+16:09:20.212     [chung] DAT      Không có lỗi JavaScript trên trang

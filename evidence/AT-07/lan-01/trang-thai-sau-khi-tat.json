@@ -1,0 +1,569 @@
+{
+  "venue_id": 1,
+  "tables": [
+    {
+      "id": 1,
+      "node_id": 1,
+      "name": "Bàn 01",
+      "enabled": 1,
+      "last_seen": 1795077341.7945065,
+      "led": "GREEN",
+      "battery_mv": 2150,
+      "battery_low": 1,
+      "observed_request_id": "889db5fb-9101-4bce-8753-ff49bf825aa0",
+      "observed_revision": 2
+    },
+    {
+      "id": 2,
+      "node_id": 2,
+      "name": "Bàn 02",
+      "enabled": 1,
+      "last_seen": 1795077341.9345553,
+      "led": "RED",
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": "18ac3f38-9c3a-42c2-b5df-2171e25483eb",
+      "observed_revision": 1
+    },
+    {
+      "id": 3,
+      "node_id": 3,
+      "name": "Bàn 03",
+      "enabled": 1,
+      "last_seen": 1795077341.8641996,
+      "led": "RED",
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": "e5200508-f038-47b6-b54c-ee41008382ae",
+      "observed_revision": 1
+    },
+    {
+      "id": 4,
+      "node_id": 4,
+      "name": "Bàn 04",
+      "enabled": 1,
+      "last_seen": 1795077342.008783,
+      "led": "RED",
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": "9ea2bd51-54be-4559-9158-07ec9ba0937b",
+      "observed_revision": 1
+    },
+    {
+      "id": 5,
+      "node_id": 5,
+      "name": "Bàn 05",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 6,
+      "node_id": 6,
+      "name": "Bàn 06",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 7,
+      "node_id": 7,
+      "name": "Bàn 07",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 8,
+      "node_id": 8,
+      "name": "Bàn 08",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 9,
+      "node_id": 9,
+      "name": "Bàn 09",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 10,
+      "node_id": 10,
+      "name": "Bàn 10",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 11,
+      "node_id": 11,
+      "name": "Bàn 11",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 12,
+      "node_id": 12,
+      "name": "Bàn 12",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 13,
+      "node_id": 13,
+      "name": "Bàn 13",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 14,
+      "node_id": 14,
+      "name": "Bàn 14",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 15,
+      "node_id": 15,
+      "name": "Bàn 15",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 16,
+      "node_id": 16,
+      "name": "Bàn 16",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 17,
+      "node_id": 17,
+      "name": "Bàn 17",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 18,
+      "node_id": 18,
+      "name": "Bàn 18",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 19,
+      "node_id": 19,
+      "name": "Bàn 19",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 20,
+      "node_id": 20,
+      "name": "Bàn 20",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 21,
+      "node_id": 21,
+      "name": "Bàn 21",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 22,
+      "node_id": 22,
+      "name": "Bàn 22",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 23,
+      "node_id": 23,
+      "name": "Bàn 23",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 24,
+      "node_id": 24,
+      "name": "Bàn 24",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    }
+  ],
+  "staff": [
+    {
+      "id": 1,
+      "name": "Minh Anh",
+      "active": 1,
+      "available": 1,
+      "device_id": 101,
+      "last_seen": 1795077342.1188567,
+      "battery_mv": null,
+      "battery_low": 0
+    },
+    {
+      "id": 2,
+      "name": "Quốc Bảo",
+      "active": 1,
+      "available": 1,
+      "device_id": 102,
+      "last_seen": 1795077342.2207456,
+      "battery_mv": null,
+      "battery_low": 0
+    }
+  ],
+  "requests": [
+    {
+      "id": "889db5fb-9101-4bce-8753-ff49bf825aa0",
+      "table_id": 1,
+      "state": "ACKNOWLEDGED",
+      "received_at": 1795077208.8633535,
+      "acknowledged_at": 1795077214.86336,
+      "staff_id": 1,
+      "assignment_revision": 1,
+      "accepted_at": 1795077306.9407947,
+      "completed_at": null,
+      "reminded_at": null,
+      "version": 4,
+      "closed_from": null,
+      "seq": 1,
+      "category": "SERVICE",
+      "dispatched_at": 1795077262.4593508,
+      "delivered_at": 1795077263.605164,
+      "led_revision": 2,
+      "led_changed_at": 1795077214.86336,
+      "table_command": {
+        "type": "SET_REQUEST_STATUS",
+        "status": "applied",
+        "attempts": 1,
+        "error": null,
+        "applied_at": 1795077219.0602882
+      },
+      "staff_command": {
+        "type": "ACCEPT_RECEIPT",
+        "status": "applied",
+        "attempts": 1,
+        "error": null,
+        "applied_at": 1795077342.1188567
+      }
+    },
+    {
+      "id": "e5200508-f038-47b6-b54c-ee41008382ae",
+      "table_id": 3,
+      "state": "REGISTERED",
+      "received_at": 1795077258.4571388,
+      "acknowledged_at": null,
+      "staff_id": 2,
+      "assignment_revision": 1,
+      "accepted_at": null,
+      "completed_at": null,
+      "reminded_at": null,
+      "version": 2,
+      "closed_from": null,
+      "seq": 3,
+      "category": "SERVICE",
+      "dispatched_at": 1795077307.9559586,
+      "delivered_at": 1795077342.2207456,
+      "led_revision": 1,
+      "led_changed_at": 1795077258.4571388,
+      "table_command": {
+        "type": "CALL_RECEIPT",
+        "status": "applied",
+        "attempts": 1,
+        "error": null,
+        "applied_at": 1795077258.5372365
+      },
+      "staff_command": {
+        "type": "DISPATCH",
+        "status": "applied",
+        "attempts": 1,
+        "error": null,
+        "applied_at": 1795077342.2207456
+      }
+    },
+    {
+      "id": "18ac3f38-9c3a-42c2-b5df-2171e25483eb",
+      "table_id": 2,
+      "state": "REGISTERED",
+      "received_at": 1795077323.7872617,
+      "acknowledged_at": null,
+      "staff_id": null,
+      "assignment_revision": 0,
+      "accepted_at": null,
+      "completed_at": null,
+      "reminded_at": null,
+      "version": 1,
+      "closed_from": null,
+      "seq": 4,
+      "category": "SERVICE",
+      "dispatched_at": null,
+      "delivered_at": null,
+      "led_revision": 1,
+      "led_changed_at": 1795077323.7872617,
+      "table_command": {
+        "type": "CALL_RECEIPT",
+        "status": "applied",
+        "attempts": 1,
+        "error": null,
+        "applied_at": 1795077323.867633
+      },
+      "staff_command": null
+    },
+    {
+      "id": "9ea2bd51-54be-4559-9158-07ec9ba0937b",
+      "table_id": 4,
+      "state": "REGISTERED",
+      "received_at": 1795077329.6971908,
+      "acknowledged_at": null,
+      "staff_id": null,
+      "assignment_revision": 0,
+      "accepted_at": null,
+      "completed_at": null,
+      "reminded_at": null,
+      "version": 1,
+      "closed_from": null,
+      "seq": 5,
+      "category": "BILL",
+      "dispatched_at": null,
+      "delivered_at": null,
+      "led_revision": 1,
+      "led_changed_at": 1795077329.6971908,
+      "table_command": {
+        "type": "CALL_RECEIPT",
+        "status": "applied",
+        "attempts": 1,
+        "error": null,
+        "applied_at": 1795077329.7784002
+      },
+      "staff_command": null
+    }
+  ],
+  "limits": {
+    "hold_seconds": 5,
+    "registration_seconds": 5,
+    "reminder_seconds": 300,
+    "unresolved_seconds": 10,
+    "table_contact_seconds": 12,
+    "staff_contact_seconds": 10,
+    "poll_seconds": 5,
+    "staff_poll_seconds": 2,
+    "retention_days": 90
+  },
+  "now": 1795077342.5579233,
+  "mode": "simulation",
+  "gateway": {
+    "connected": true,
+    "error": null
+  },
+  "simulator": {
+    "connected": true,
+    "fault": "none",
+    "delay": 0,
+    "poll_seconds": 5,
+    "double_ms": 1000,
+    "nodes": [
+      {
+        "node_id": 1,
+        "phase": "active",
+        "pattern": "green",
+        "led": "GREEN",
+        "category": "SERVICE",
+        "hold_at": null,
+        "request_id": "889db5fb-9101-4bce-8753-ff49bf825aa0",
+        "pending": null,
+        "press_armed": false,
+        "battery_low": false,
+        "error": null
+      },
+      {
+        "node_id": 3,
+        "phase": "active",
+        "pattern": "red",
+        "led": "RED",
+        "category": "SERVICE",
+        "hold_at": null,
+        "request_id": "e5200508-f038-47b6-b54c-ee41008382ae",
+        "pending": null,
+        "press_armed": false,
+        "battery_low": false,
+        "error": null
+      },
+      {
+        "node_id": 2,
+        "phase": "active",
+        "pattern": "red",
+        "led": "RED",
+        "category": "SERVICE",
+        "hold_at": null,
+        "request_id": "18ac3f38-9c3a-42c2-b5df-2171e25483eb",
+        "pending": null,
+        "press_armed": false,
+        "battery_low": false,
+        "error": null
+      },
+      {
+        "node_id": 4,
+        "phase": "active",
+        "pattern": "red",
+        "led": "RED",
+        "category": "BILL",
+        "hold_at": null,
+        "request_id": "9ea2bd51-54be-4559-9158-07ec9ba0937b",
+        "pending": null,
+        "press_armed": false,
+        "battery_low": false,
+        "error": null
+      }
+    ],
+    "staff_devices": [
+      {
+        "staff_id": 1,
+        "device_id": 101,
+        "powered": true,
+        "source": "simulator",
+        "vibrating": false,
+        "link_lost": false,
+        "error": null,
+        "tasks": [
+          {
+            "request_id": "889db5fb-9101-4bce-8753-ff49bf825aa0",
+            "request_seq": 1,
+            "table_id": 1,
+            "table_name": "Bàn 01",
+            "category": "SERVICE",
+            "revision": 1,
+            "state": "ACCEPTED",
+            "shown_at": 1795077342.0413237
+          }
+        ]
+      },
+      {
+        "staff_id": 2,
+        "device_id": 102,
+        "powered": true,
+        "source": "simulator",
+        "vibrating": true,
+        "link_lost": false,
+        "error": null,
+        "tasks": [
+          {
+            "request_id": "e5200508-f038-47b6-b54c-ee41008382ae",
+            "request_seq": 3,
+            "table_id": 3,
+            "table_name": "Bàn 03",
+            "category": "SERVICE",
+            "revision": 1,
+            "state": "SHOWN",
+            "shown_at": 1795077342.0413237
+          }
+        ]
+      }
+    ]
+  },
+  "staff_stub": false,
+  "double_ms": 1000,
+  "stats": {
+    "completed": 1,
+    "average_seconds": 47.82763743400574
+  }
+}

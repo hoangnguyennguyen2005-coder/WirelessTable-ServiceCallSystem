@@ -1,0 +1,371 @@
+{
+  "venue_id": 1,
+  "tables": [
+    {
+      "id": 1,
+      "node_id": 1,
+      "name": "Bàn 01",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 2,
+      "node_id": 2,
+      "name": "Bàn 02",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 3,
+      "node_id": 3,
+      "name": "Bàn 03",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 4,
+      "node_id": 4,
+      "name": "Bàn 04",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 5,
+      "node_id": 5,
+      "name": "Bàn 05",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 6,
+      "node_id": 6,
+      "name": "Bàn 06",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 7,
+      "node_id": 7,
+      "name": "Bàn 07",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 8,
+      "node_id": 8,
+      "name": "Bàn 08",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 9,
+      "node_id": 9,
+      "name": "Bàn 09",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 10,
+      "node_id": 10,
+      "name": "Bàn 10",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 11,
+      "node_id": 11,
+      "name": "Bàn 11",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 12,
+      "node_id": 12,
+      "name": "Bàn 12",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 13,
+      "node_id": 13,
+      "name": "Bàn 13",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 14,
+      "node_id": 14,
+      "name": "Bàn 14",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 15,
+      "node_id": 15,
+      "name": "Bàn 15",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 16,
+      "node_id": 16,
+      "name": "Bàn 16",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 17,
+      "node_id": 17,
+      "name": "Bàn 17",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 18,
+      "node_id": 18,
+      "name": "Bàn 18",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 19,
+      "node_id": 19,
+      "name": "Bàn 19",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 20,
+      "node_id": 20,
+      "name": "Bàn 20",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 21,
+      "node_id": 21,
+      "name": "Bàn 21",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 22,
+      "node_id": 22,
+      "name": "Bàn 22",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 23,
+      "node_id": 23,
+      "name": "Bàn 23",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    },
+    {
+      "id": 24,
+      "node_id": 24,
+      "name": "Bàn 24",
+      "enabled": 1,
+      "last_seen": null,
+      "led": null,
+      "battery_mv": null,
+      "battery_low": 0,
+      "observed_request_id": null,
+      "observed_revision": null
+    }
+  ],
+  "staff": [
+    {
+      "id": 1,
+      "name": "Minh Anh",
+      "active": 1,
+      "available": 1,
+      "device_id": 101,
+      "last_seen": 1795079213.431921,
+      "battery_mv": null,
+      "battery_low": 0
+    },
+    {
+      "id": 2,
+      "name": "Quốc Bảo",
+      "active": 1,
+      "available": 1,
+      "device_id": 102,
+      "last_seen": 1795079213.4671924,
+      "battery_mv": null,
+      "battery_low": 0
+    }
+  ],
+  "requests": [],
+  "limits": {
+    "hold_seconds": 5,
+    "registration_seconds": 5,
+    "reminder_seconds": 300,
+    "unresolved_seconds": 10,
+    "table_contact_seconds": 8,
+    "staff_contact_seconds": 8,
+    "poll_seconds": 5,
+    "staff_poll_seconds": 2,
+    "retention_days": 90
+  },
+  "now": 1795079214.0873618,
+  "mode": "simulation",
+  "gateway": {
+    "connected": true,
+    "error": null
+  },
+  "simulator": {
+    "connected": true,
+    "fault": "none",
+    "fault_node": null,
+    "delay": 0,
+    "poll_seconds": 5,
+    "double_ms": 1000,
+    "nodes": [],
+    "staff_devices": [
+      {
+        "staff_id": 1,
+        "device_id": 101,
+        "powered": true,
+        "source": "simulator",
+        "vibrating": false,
+        "link_lost": false,
+        "error": null,
+        "tasks": []
+      },
+      {
+        "staff_id": 2,
+        "device_id": 102,
+        "powered": true,
+        "source": "simulator",
+        "vibrating": false,
+        "link_lost": false,
+        "error": null,
+        "tasks": []
+      }
+    ]
+  },
+  "staff_stub": false,
+  "double_ms": 1000,
+  "generation": 3,
+  "stats": {
+    "completed": 0,
+    "average_seconds": null
+  }
+}
