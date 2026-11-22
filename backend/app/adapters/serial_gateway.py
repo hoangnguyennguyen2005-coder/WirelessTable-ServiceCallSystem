@@ -19,6 +19,16 @@ from app.domain.models import DeviceEvent
 log = logging.getLogger(__name__)
 
 
+def open_gateway_port(port, baud, **options):
+    """Keep the ESP32-C3 running when the PC opens the native USB serial port."""
+    transport = serial.Serial(baudrate=baud, **options)
+    transport.port = port
+    transport.dtr = False
+    transport.rts = False
+    transport.open()
+    return transport
+
+
 class FrameParser:
     def __init__(self, limit=4096):
         self.limit, self.buffer, self.discarding = limit, bytearray(), False
@@ -47,7 +57,7 @@ class FrameParser:
 
 
 class SerialGateway:
-    def __init__(self, service, port, baud=115200, factory=serial.Serial):
+    def __init__(self, service, port, baud=115200, factory=open_gateway_port):
         self.service, self.port, self.baud, self.factory = service, port, baud, factory
         self.connected, self.error, self.parser_errors = False, None, 0
         self.frames_in, self.last_frame_at = 0, None
@@ -117,6 +127,8 @@ class SerialGateway:
                             self.last_frame_at = time.time()
                             # exchange() has committed before any byte is written back.
                             for frame in self.service.exchange(event, "gateway"):
+                                # Bind late replies to their originating RF listen window.
+                                frame = {**frame, "event_id": event.event_id}
                                 try:
                                     transport.write((json.dumps(frame) + "\n").encode())
                                 except (OSError, serial.SerialException) as error:

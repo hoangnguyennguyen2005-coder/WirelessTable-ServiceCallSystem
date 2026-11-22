@@ -2,7 +2,7 @@
 
 Cập nhật 2026-11-17. **Nguồn có hiệu lực: logbook ECE411 của nhóm 3** (Step 1 §1.5.2 quy trình, Step 3 Table 3.4.1 gồm 33 ER và Table 3.4.2 gồm 9 ràng buộc, Step 4 Concept C, Step 5 phân rã chức năng, Step 6 kế hoạch test). `requirements-source.txt` là bản yêu cầu ban đầu, viết khi chưa có logbook; chỗ nào hai bên khác nhau thì theo logbook (xem `assumptions.md`).
 
-Repository này là **work package 4** trong logbook §6.6 (web/app tại máy trung tâm) cùng simulator và công cụ giả lập gateway. Firmware nút bàn, gateway và thiết bị nhân viên không nằm ở đây.
+Repository này gồm **work package 4** trong logbook §6.6 (web/app tại máy trung tâm), simulator và firmware gateway ESP32-C3 trong phạm vi ghép theo Phương án B. Nhóm phụ trách nút bàn và thiết bị nhân viên dùng hợp đồng RF trong `protocol.md` để ghép firmware của họ.
 
 ## Phạm vi
 
@@ -36,6 +36,7 @@ Concept C: Pro Mini 3.3 V/ATmega328P ≤4 MHz, BOD 1.8 V, 2×AAA trực tiếp �
 | FR-13 | `venue_id` trong mọi frame và gắn với database; frame của quán khác bị từ chối. | M03 |
 | FR-14 | Simulator bàn (2 nút, 2 đèn, nút ẩn) và thiết bị nhân viên ảo đi cùng luồng nghiệp vụ với gateway thật; có lỗi giả lập. | — |
 | FR-15 | Chỉ loopback, kiểm tra Origin; chế độ phần cứng không có endpoint mô phỏng; stub nhân viên cần token. | C-05, C-06 |
+| FR-16 | Gateway dùng sơ đồ UT-06, chuyển RF v2 31 byte ↔ NDJSON v2 và chỉ phát trong cửa sổ của đúng thiết bị, phiên và lượt liên lạc. PC bỏ frame sai venue trước khi lấy outbox. | F03, M03, R03, UT-04–06 |
 
 ## Thực thể
 
@@ -47,3 +48,4 @@ tables, staff (+ `device_id`), requests (+ `seq`, `category`, thuộc tính giao
 - SC-02: Các phiếu UT-10, UT-11, UT-12 và phần mềm của AT-01/AT-07 có test tự động tương ứng (`traceability.md`).
 - SC-03: Dùng được ở 1366×768 và 390 px; không hiển thị số đo giả.
 - SC-04: Mọi ER phần cứng (tầm phủ, pin, vỏ, chi phí, an toàn) được ghi rõ là chưa kiểm chứng.
+- SC-05: Vector CALL Bill và gói retry qua gateway tạo một yêu cầu, trả CALL_RECEIPT sau commit và giữ nguyên số thứ tự. Dòng USB 4096 byte được xét xử lý, dòng 4097 byte bị bỏ đến LF. Poll sai venue chỉ nhận lỗi, lệnh GREEN vẫn sẵn sàng cho đúng venue.

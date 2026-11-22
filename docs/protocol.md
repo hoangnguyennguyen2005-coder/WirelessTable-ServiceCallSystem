@@ -1,6 +1,6 @@
-# Protocol v2 — đề xuất hợp đồng tích hợp firmware
+# Protocol v2 — hợp đồng tích hợp Phương án B
 
-**Phía PC đã triển khai; phần RF/firmware là đề xuất, chưa kiểm chứng trên phần cứng.** Chỉ dùng cho Concept C (logbook Step 4). Bốn sự kiện sau luôn tách biệt: RF/USB đã nhận ≠ trung tâm đã lưu bền (registered) ≠ quản lý đã xác nhận ≠ thiết bị đã hiển thị.
+Hợp đồng này dùng cho Concept C (logbook Step 4). RF/USB đã nhận, trung tâm đã lưu bền, quản lý đã xác nhận và thiết bị đã hiển thị là bốn mốc riêng. Xem [cách nạp và chạy lượt ghép đầu](hardware-integration.md).
 
 Thay đổi so với v1: thêm `venue_id`, loại yêu cầu `category` (SERVICE/BILL), `NODE_HELLO`, toàn bộ nhóm thiết bị nhân viên, và phản hồi ở mọi lần liên lạc. Frame `protocol_version: 1` bị từ chối.
 
@@ -42,7 +42,7 @@ Thiết bị nhân viên (luôn gửi `boot_id`; `call_token` bỏ qua):
 
 ### Frame từ PC xuống thiết bị
 
-Chung: `protocol_version`, `venue_id`, `message_type`, `command_id` (UUID, hoặc `null` với phản hồi không cần theo dõi), `node_id`, `request_id`, `payload`.
+Chung: `protocol_version`, `venue_id`, `message_type`, `command_id` (UUID, hoặc `null` với phản hồi không cần theo dõi), `node_id`, `request_id`, `payload`. Adapter USB gắn `event_id` của bản tin lên vào mỗi phản hồi. Gateway dùng ID này để ghép đúng lượt nghe, kể cả khi cùng node đã gửi poll mới hoặc khởi động lại.
 
 | Loại | Đích | Payload |
 |---|---|---|
@@ -56,7 +56,7 @@ Chung: `protocol_version`, `venue_id`, `message_type`, `command_id` (UUID, hoặ
 | `ERROR` | bất kỳ | `event_id`, `payload.reason` |
 
 Quy tắc:
-- **Mỗi lần liên lạc đều có phản hồi mức ứng dụng**, để thiết bị phân biệt trung tâm còn sống với ACK radio (ER-F03, ER-R03). Khi thiết bị đã xác nhận trạng thái hiện hành, phản hồi có `command_id: null` và không tạo dòng outbox.
+- Các lượt `CALL`, `STATUS_POLL`, `DONE`, `NODE_HELLO`, `STAFF_POLL` và `STAFF_ACCEPT` mở cửa sổ phản hồi mức ứng dụng (ER-F03, ER-R03). Khi thiết bị đã xác nhận trạng thái hiện hành, phản hồi có `command_id: null` và không tạo dòng outbox.
 - Lệnh có `command_id` nằm trong outbox: `pending → gateway_received → applied`; `failed` sau 5 lần (lùi 1, 2, 4, 8, 16 giây), `expired` sau 120 giây, `superseded` khi trạng thái đổi. Chỉ phát khi thiết bị đích liên lạc, tối đa 4 frame mỗi lần.
 - Nút bàn chỉ nhận frame đúng `boot_id`/`call_token` của mình và `revision` không giảm. `revision` chỉ tăng khi đèn phải đổi: ghi nhận (đỏ) → xác nhận (xanh) → hoàn tất (tắt). Giao việc và nhận việc không đổi `revision`.
 - Thiết bị nhân viên đặt task theo `payload.task`; frame lặp không tạo task mới. Khi `boot_id` đổi, PC gửi lại toàn bộ việc đang mở.
@@ -75,9 +75,15 @@ Quy tắc:
 
 Bước 5–6 có thể diễn ra trước bước 4: giao việc không cần xác nhận trước, và không làm đèn chuyển xanh.
 
-## RF gateway ↔ thiết bị: frame 31 byte (đề xuất)
+## RF gateway ↔ thiết bị: frame 31 byte
 
-nRF24L01+ giới hạn payload 32 byte nên không gửi JSON qua RF. Số nhiều byte theo little-endian. Kênh, địa chỉ pipe, tốc độ, CRC radio do người viết firmware quyết định.
+nRF24L01+ dùng kênh 76, 1 Mbps, địa chỉ 5 byte, dynamic payload, CRC radio 16 bit và auto-ACK. Số nhiều byte theo little-endian. Lượt ghép đầu dùng `venue_id=1`, bàn `1` và thiết bị tay `101`. Cấu hình giữ địa chỉ RF theo cách đánh số của UT-06 V2.1.
+
+| Pipe | 5 byte theo thứ tự truyền vào RF24 |
+|---|---|
+| Gửi lên gateway | `50 34 01 C3 A5` |
+| Trả về nút bàn `n` (1–24) | `50 34 01 01 nn` (`nn` là `n` dạng hex) |
+| Trả về thiết bị tay `n` (101–102) | `50 34 01 02 nn` (`nn` là `n - 100` dạng hex) |
 
 | Offset | Byte | Kiểu | Ý nghĩa |
 |---|---:|---|---|
@@ -92,11 +98,47 @@ nRF24L01+ giới hạn payload 32 byte nên không gửi JSON qua RF. Số nhi�
 | 20 | 1 | u8 | nút bàn: LED 0 OFF/1 RED/2 GREEN · nhân viên: task 1 SHOWN/2 ACCEPTED/3 CLEARED |
 | 21 | 1 | u8 | category: 0 không có, 1 SERVICE, 2 BILL |
 | 22 | 1 | u8 | flags: bit0 có số đo pin, bit1 pin yếu |
-| 23 | 2 | u16 | battery mV, hoặc table_id trong DISPATCH |
+| 23 | 2 | u16 | Theo loại frame, xem bảng ngay dưới |
 | 25 | 4 | u32 | gateway command tag; 0 nếu không theo dõi |
 | 29 | 2 | u16 | CRC16-CCITT-FALSE của byte 0..28 (đề xuất, bổ sung cho CRC radio) |
 
-Tổng 31 ≤ 32 byte. Gateway giữ ánh xạ tag ↔ `command_id` và (node, boot, token) ↔ UUID; nút bàn không cần UUID. Thiết bị nhân viên dùng `request_seq` nên gateway không cần bảng ánh xạ cho chúng. Tên bàn không đi qua RF: thiết bị hiển thị `table_id`.
+| Loại frame | Byte 20 và 23–24 |
+|---|---|
+| `DEVICE_STATUS`, `STAFF_POLL` và uplink có kèm pin | Byte 23–24 là mV nếu bit 0 của flags bật. Bit 1 báo pin yếu. `DEVICE_STATUS` với bit 1 tắt báo pin bình thường. Với các uplink khác, hai bit đều tắt nghĩa là bỏ qua pin. |
+| `DISPATCH`, `ACCEPT_RECEIPT`, `DISPATCH_CANCEL` | Byte 20 lần lượt là 1, 2, 3. Byte 23–24 là `table_id`. Tên bàn và lý do thu hồi lưu ở PC. |
+| `STAFF_STATUS` | Byte 23–24 là `open_tasks` dạng `u16`, tối đa 24 việc với cấu hình 24 bàn. Byte 20 bằng 0. |
+| `ERROR` | Byte 23–24 là mã lý do. Byte 20 bằng 0. |
+
+Mã `ERROR` của R01 gồm `1 wrong_venue`, `2 unknown_node`, `3 unknown_staff_device`, `4 no_request_for_correlation`, `5 correlation_mismatch`, `6 stale_device_status`, `7 stale_assignment`, `8 event_id_collision`, `9 unknown_command`, `10 unknown_request` và `255` cho các lý do khác. Khung RF sai venue bị lọc tại gateway. Nếu PC từ chối venue, thông báo `ERROR` chỉ được chuyển khi khớp cấu hình và đúng lượt nghe.
+
+Gateway ghi nhớ 48 ánh xạ gần nhất giữa `command_tag` và `command_id`. Tag `0` dành cho phản hồi không theo dõi. Khi thiết bị báo `STATUS_APPLIED` hoặc `STAFF_APPLIED` với tag còn trong bộ nhớ, gateway kiểm node, boot, token hoặc `request_seq`, revision và trạng thái. Sau khi mất ánh xạ, PC vẫn đối soát theo các trường ứng dụng. PC giữ ánh xạ bền từ bộ `(node, boot, call_token)` sang UUID của bàn. Gateway có thể điền UUID đã thấy vào `STATUS_APPLIED`. Thiết bị tay dùng `request_seq` để đối soát việc.
+
+Phản hồi xuống dùng `boot_id` và `event sequence` của lượt nghe. Với nút bàn, `call_token` trong JSON cũng phải khớp. Thời gian thử là 250 ms từ uplink, gồm thời gian dự phòng cho lần phát RF. Khi lỡ lượt, gateway bỏ bản trả cũ và PC giữ cơ chế gửi lại theo outbox/poll. Chỉ `CALL_RECEIPT` hoặc `DONE_RECEIPT` do PC gửi sau commit mới xác nhận kết quả ứng dụng.
+
+### Vector ghép đầu
+
+`CALL Bill` cho bàn 1, `boot_id=123`, `call_token=7`, `event_seq=1`, CRC `0x53EC`:
+
+```text
+02 01 01 00 01 00 7B 00 00 00 07 00 00 00 01 00 00 00 00 00 00 02 00 00 00 00 00 00 00 EC 53
+```
+
+Frame USB tương ứng là ví dụ `CALL` ở đầu tài liệu. Gửi lại nguyên vector giữ `event_id` là `1.123.7.1.CALL`.
+
+Các vector dưới đây dùng tag cố định để đối chiếu codec. Gateway cấp tag khi chạy để liên kết lệnh USB với báo cáo từ thiết bị.
+
+| Vector | 31 byte theo thứ tự truyền |
+|---|---|
+| `CALL Service` | `02 01 01 00 01 00 7B 00 00 00 08 00 00 00 02 00 00 00 00 00 00 01 00 00 00 00 00 00 00 9D D2` |
+| `SET_REQUEST_STATUS GREEN` | `02 11 01 00 01 00 7B 00 00 00 07 00 00 00 02 00 02 00 00 00 02 02 00 00 00 04 03 02 01 88 70` |
+| `DONE` | `02 03 01 00 01 00 7B 00 00 00 07 00 00 00 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 BB D8` |
+| `DONE_RECEIPT OFF` | `02 12 01 00 01 00 7B 00 00 00 07 00 00 00 03 00 03 00 00 00 00 02 00 00 00 00 00 00 00 2E D5` |
+| `DISPATCH` | `02 18 01 00 65 00 29 00 00 00 01 00 00 00 01 00 01 00 00 00 01 02 00 01 00 05 03 02 01 9C D3` |
+| `STAFF_ACCEPT` | `02 0A 01 00 65 00 29 00 00 00 01 00 00 00 02 00 01 00 00 00 00 00 00 00 00 00 00 00 00 E0 A2` |
+| `ACCEPT_RECEIPT` | `02 19 01 00 65 00 29 00 00 00 01 00 00 00 02 00 01 00 00 00 02 02 00 01 00 00 00 00 00 3F AA` |
+| `DISPATCH_CANCEL` | `02 1A 01 00 65 00 29 00 00 00 01 00 00 00 03 00 01 00 00 00 03 02 00 01 00 00 00 00 00 5C 82` |
+| `DEVICE_STATUS`, 2150 mV và pin yếu | `02 05 01 00 01 00 7B 00 00 00 07 00 00 00 05 00 00 00 00 00 00 00 03 66 08 00 00 00 00 FE DD` |
+| `ERROR no_request_for_correlation` | `02 FF 01 00 01 00 7B 00 00 00 07 00 00 00 04 00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 77` |
 
 Trả lời qua ACK payload chỉ an toàn khi biết chắc người nhận; với pipe dùng chung, gateway phải gửi phản hồi có địa chỉ trong cửa sổ nhận của thiết bị (logbook Step 5 "Return scheduling"). Chu kỳ poll 5 giây là giả định của mô hình năng lượng, không phải yêu cầu.
 

@@ -1,6 +1,6 @@
 # PBL4 — Gọi phục vụ tại bàn (Wireless Table-Service Call System)
 
-Phần mềm tại máy trung tâm của dự án ECE411, nhóm 3, theo **Concept C** trong logbook: nút bàn Pro Mini + nRF24L01+ (2×AAA) → gateway ESP32-C3 qua USB → PC tại quán → thiết bị nhân viên chuyên dụng. Repository gồm backend FastAPI/SQLite, giao diện quản lý React tiếng Việt, simulator nút bàn và thiết bị nhân viên, công cụ giả lập gateway. Chạy hoàn toàn tại quán, không cần Internet. Không có firmware ở đây.
+Phần mềm tại máy trung tâm của dự án ECE411, nhóm 3, theo **Concept C** trong logbook: nút bàn Pro Mini + nRF24L01+ (2×AAA) → gateway ESP32-C3 qua USB → PC tại quán → thiết bị nhân viên chuyên dụng. Repository gồm backend FastAPI/SQLite, giao diện quản lý React tiếng Việt, simulator, gateway giả lập và [firmware gateway ESP32-C3 theo Phương án B](docs/hardware-integration.md). Hệ thống chạy cục bộ tại quán.
 
 **Nguồn yêu cầu: logbook ECE411 (Step 1–6).** Xem [đặc tả](docs/spec.md) và [bảng truy vết 33 ER](docs/traceability.md).
 
@@ -57,6 +57,8 @@ Khi phát triển giao diện, chạy thêm `npm --prefix frontend run dev` và 
 7. Dừng rồi chạy lại server: mọi yêu cầu, thứ tự và trạng thái còn nguyên. **Reset dữ liệu demo…** có hộp xác nhận.
 
 ## Chạy với gateway thật
+
+Xem [sơ đồ chân, cách nạp sketch và cách thử CALL Bill](docs/hardware-integration.md).
 
 Database hardware tách riêng và ban đầu trống: vào **Cấu hình** khai báo bàn (node ID) và nhân viên (ID thiết bị) trước.
 

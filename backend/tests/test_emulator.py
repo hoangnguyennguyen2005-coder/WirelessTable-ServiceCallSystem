@@ -144,6 +144,7 @@ def test_shipped_emulator_real_pty(setup):
         port = line.strip().split(": ", 1)[1]
         gateway = SerialGateway(s, port)
         gateway.start()
+        wait(lambda: gateway.connected)
         process.stdin.write("bad\noversized\nfragment 1 bill\n")
         process.stdin.flush()
         wait(lambda: len(s.snapshot()["requests"]) == 1)

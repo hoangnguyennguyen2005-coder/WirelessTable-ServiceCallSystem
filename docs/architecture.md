@@ -1,6 +1,6 @@
 # Kiến trúc và hợp đồng triển khai
 
-Phạm vi: work package 4 của logbook (web/app tại máy trung tâm), simulator và công cụ giả lập gateway. Concept C là cố định, không xét lại ở đây.
+Phạm vi gồm work package 4 của logbook (web/app tại máy trung tâm), simulator và cầu gateway theo Phương án B của work package 2. Hệ thống dùng Concept C.
 
 ## Nguyên tắc
 
@@ -24,12 +24,21 @@ Simulator (bàn ảo) + VirtualStaffHub (thiết bị NV ảo) ─────�
 | `backend/app/domain/models.py` | Frame v2 (Pydantic, cấm trường lạ), `Action`, hằng số. |
 | `backend/app/domain/service.py` | Toàn bộ nghiệp vụ: `exchange`, `action`, `remind`, `watch`, `prune`, `snapshot`, nhật ký. Không import serial hay UI. |
 | `backend/app/adapters/serial_gateway.py` | pyserial, parser NDJSON có giới hạn, kết nối lại 1–16 giây. |
+| `firmware/PBL4_Gateway_B/PBL4_Gateway_B.ino` | Codec RF 31 byte, USB CDC, ghép lượt nghe, chuyển tiếp và chẩn đoán R01. |
 | `backend/app/adapters/simulator.py` | Mô hình nút bàn (giữ 5 giây, mẫu đèn, bấm đúp, poll, lỗi giả lập). |
 | `backend/app/adapters/staff.py` | Thiết bị nhân viên ảo: dùng cho simulation và làm stub khi tích hợp. |
 | `backend/app/main.py` | HTTP, SSE, vòng lặp nền (đồng hồ, nhắc, theo dõi, dọn nhật ký), kiểm tra Host/Origin. |
 | `tools/serial_emulator.py` | Đóng vai gateway + nút + thiết bị NV ở đầu kia cổng serial. |
 
 Simulator và gateway thật gọi cùng một hàm `Service.exchange(event, source)`, nên test trên simulator đi qua đúng đường nghiệp vụ của phần cứng.
+
+### Luồng gateway của FR-16
+
+1. RF codec kiểm độ dài, CRC, phiên bản, venue và nhóm ID. Gateway cấp `event_id` ổn định từ định danh RF và giữ lượt nghe mới nhất của từng node.
+2. PC đọc ngay phần serial có sẵn. Sau transaction, adapter gắn `event_id` nguồn vào từng bản trả. `Service.exchange()` dừng trước outbox nếu frame sai venue.
+3. Gateway ghép bản trả với lượt của node, kiểm hạn và phiên, rồi gửi vào pipe riêng. Nhận `COMMAND_ACK` chỉ đánh dấu lệnh đã đến gateway. Trạng thái áp dụng đến từ thiết bị. Nếu bỏ lỡ lượt, outbox của PC tiếp tục retry theo lịch hiện hành.
+
+Sketch dùng Arduino ESP32, cJSON đi kèm core ESP32 và RF24 đã dùng trong UT-06. Bộ nhớ nhận dòng USB và tag có giới hạn. Gateway giữ thông tin lượt nghe trong RAM. SQLite, schema và dữ liệu nghiệp vụ vẫn do PC sở hữu.
 
 ## Hợp đồng
 

@@ -12,6 +12,7 @@ import time
 
 import pytest
 
+from app.adapters import serial_gateway
 from app.adapters.serial_gateway import FrameParser, SerialGateway
 from app.adapters.simulator import Simulator
 from app.db.store import Store
@@ -540,6 +541,22 @@ def test_simulator_rehydrates_active_requests_after_restart(setup):
 
 
 # --------------------------------------------------------- UT-06 gateway bridge
+def test_gateway_opens_serial_with_reset_lines_inactive(monkeypatch):
+    class Port:
+        def __init__(self, *, baudrate, timeout):
+            self.baudrate = baudrate
+            self.timeout = timeout
+            self.dtr = self.rts = True
+
+        def open(self):
+            assert (self.port, self.baudrate, self.timeout) == ("COM8", 115200, 0.2)
+            assert self.dtr is False and self.rts is False
+            self.is_open = True
+
+    monkeypatch.setattr(serial_gateway.serial, "Serial", Port)
+    assert serial_gateway.open_gateway_port("COM8", 115200, timeout=0.2).is_open
+
+
 def test_serial_worker_reconnects_and_bridges_table_and_staff(setup):
     import serial
 
@@ -589,15 +606,19 @@ def test_serial_worker_reconnects_and_bridges_table_and_staff(setup):
     gateway = SerialGateway(s, "fake", factory=Fake)
     gateway.start()
     try:
-        send(event(category="BILL"))
+        bill = event(category="BILL")
+        send(bill)
         wait(lambda: len(writes) >= 1)
         assert writes[0]["message_type"] == "CALL_RECEIPT"
+        assert writes[0]["event_id"] == bill.event_id
         assert (writes[0]["venue_id"], writes[0]["payload"]["category"]) == (1, "BILL")
         r = s.snapshot()["requests"][0]
         s.action(r["id"], "dispatch", act(r["version"], staff_id=1))
-        send(staff_event("STAFF_POLL"))
+        poll = staff_event("STAFF_POLL")
+        send(poll)
         wait(lambda: len(writes) >= 2)
         assert (writes[1]["message_type"], writes[1]["node_id"]) == ("DISPATCH", 101)
+        assert writes[1]["event_id"] == poll.event_id
         send(event(node_id=2, venue_id=9), raw=b"garbage\n")
         wait(lambda: len(writes) >= 3 and gateway.parser_errors == 1)
         assert writes[2]["message_type"] == "ERROR"

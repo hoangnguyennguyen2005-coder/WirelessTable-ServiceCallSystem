@@ -1,6 +1,6 @@
 # Truy vết logbook ↔ phần mềm trung tâm
 
-Đối chiếu Table 3.4.1 (33 ER), Table 3.4.2 (C-01…C-09) và kế hoạch test Step 6 của logbook với mã nguồn trong repository này (work package 4: web/app tại máy trung tâm, kèm simulator và công cụ giả lập gateway).
+Đối chiếu Table 3.4.1 (33 ER), Table 3.4.2 (C-01…C-09) và kế hoạch test Step 6 của logbook với mã nguồn web/app và gateway Phương án B.
 
 Cách đọc cột **Mức**:
 
@@ -65,7 +65,7 @@ Test nằm trong `backend/tests/`: `D` = `test_domain.py`, `R` = `test_records.p
 | UT-11 | Lưu bền, thứ tự commit/xác nhận, khôi phục, CSV, lưu giữ | Tự động: `test_records.py`, `test_backup.py` |
 | UT-12 | Giao diện quản lý, tuổi, nhắc 300 giây, giao việc | Tự động: `test_domain.py`, `test_api.py`, e2e |
 | UT-01…UT-03 | Nút, cửa sổ thời gian, trạng thái/đèn của nút bàn | Chỉ có mô hình tham chiếu trong simulator (`test_adapters.py`); firmware chưa có |
-| UT-04…UT-06 | Khung RF, lập lịch, cầu USB | Phía PC: parser NDJSON, kết nối lại, outbox (`test_adapters.py`, `test_emulator.py`); phía gateway chưa có |
+| UT-04…UT-06 | Khung RF, lập lịch, cầu USB | `firmware/PBL4_Gateway_B`, `test_adapters.py`, `test_emulator.py` và test cách ly venue ở `test_domain.py`. Cần chạy lại trên ESP32-C3 và radio thật. |
 | UT-07, UT-08 | Hiển thị và nhận việc trên thiết bị nhân viên | Mô hình thiết bị ảo; thiết bị thật chưa có |
 | UT-09 | Đo áp, ngủ | Phần cứng |
 | IT-01 | Bàn – gateway – PC | Chạy được với `tools/serial_emulator.py`; chưa chạy với phần cứng |
@@ -78,5 +78,5 @@ Test nằm trong `backend/tests/`: `D` = `test_domain.py`, `R` = `test_records.p
 
 - Cửa sổ bấm đúp, mẫu đèn, nội dung hiển thị: đang là tham số/đề xuất (`PBL_DOUBLE_MS`, simulator), đổi sau khi thử với người dùng.
 - Ngưỡng pin yếu và cắt: `PBL_LOW_BATTERY_MV` tắt mặc định; trung tâm tin cờ `battery_low` của firmware.
-- Khung RF, kênh, địa chỉ, tốc độ, số lần gửi lại: không định nghĩa ở đây; `protocol.md` chỉ quy định ranh giới USB giữa gateway và PC.
+- Khung RF, kênh, địa chỉ, tốc độ và cửa sổ nhận của Phương án B nằm trong `protocol.md`. Đo lại thời gian với bàn và thiết bị tay thật.
 - Timeout khi nhân viên chưa nhận: chưa đặt; trung tâm chỉ hiển thị, không tự leo thang.

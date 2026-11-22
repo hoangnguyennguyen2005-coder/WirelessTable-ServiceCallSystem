@@ -1,11 +1,37 @@
-# Tích hợp phần cứng — những gì chưa kiểm chứng
+# Ghép gateway ESP32-C3 và PC theo Phương án B
 
-Repository không chứa firmware và chưa từng được chạy với Pro Mini, nRF24L01+, ESP32-C3 hay thiết bị nhân viên thật. Mọi kết quả hiện có là phần mềm (simulator, cổng serial giả lập). Không có pinout, kênh radio hay địa chỉ nào được đặt ở đây; đó là việc của các work package 1–3.
+Sketch [PBL4_Gateway_B.ino](../firmware/PBL4_Gateway_B/PBL4_Gateway_B.ino) dùng cùng mạch UT-06 và giữ các lệnh chẩn đoán của R01. Mở sketch trong thư mục `firmware/PBL4_Gateway_B`. [Phương án B](https://docs.google.com/document/d/1OBTQ_S2pkf3wWKKqeCmY9V37gosZpCLJ-DULTzvpLpU/edit) · [Logbook ECE411](https://docs.google.com/document/d/1cgZ2Ah7xPj9pMx1PBW8e7ucmRjqLIAIC/edit)
+
+1. Rút USB và kiểm dây theo bảng. Cắm lại cáp USB dữ liệu vào PC.
+
+   | nRF24L01+ | ESP32-C3 |
+   |---|---|
+   | VCC | 3V3 |
+   | GND | GND |
+   | CE | GPIO3 |
+   | CSN | GPIO10 |
+   | SCK | GPIO4 |
+   | MISO | GPIO5 |
+   | MOSI | GPIO6 |
+   | IRQ | Để trống |
+
+2. Trong Arduino IDE, dùng **ESP32 core 3.3.12** và **RF24 1.6.2**, chọn **ESP32C3 Dev Module**, bật **USB CDC On Boot** và chọn đúng COM. Bấm **Verify**, sau đó **Upload** với `PBL4_PC_BENCH=0`.
+3. Mở Serial Monitor ở **115200 baud + New Line**. `PING` phải trả `PONG PBL4-GW-B-R01`. `STATUS` phải có `RADIO=OK`, `VENUE=1`, `CH=76`, `RF=31` và `USB=NDJSON2`. Gửi `TEST CALL` để nhận JSON `CALL` cho bàn 1, loại `BILL`. Dán dòng dưới đây trong 60 giây, kiểm trace bắt đầu bằng `TEST TX 0210`, gửi `TEST STOP` rồi đóng Serial Monitor.
+
+   ```json
+   {"protocol_version":2,"venue_id":1,"message_type":"CALL_RECEIPT","node_id":1,"boot_id":123,"call_token":7,"request_id":"01234567-89ab-cdef-0123-456789abcdef","command_id":null,"payload":{"led":"RED","revision":1,"category":"BILL","request_seq":1}}
+   ```
+
+4. Để ghép gateway với PC trước khi có bàn, nạp với `PBL4_PC_BENCH=1` và đóng Serial Monitor. Chạy [profile hardware theo README](../README.md#chạy-với-gateway-thật) với `PBL_SERIAL_PORT` là COM vừa chọn, `PBL_SERIAL_BAUD=115200`, `PBL_VENUE_ID=1` và `PBL_DATA_DIR` là thư mục thử riêng. Vào **Cấu hình** tại `http://127.0.0.1:8000` và thêm **Bàn 1** (`node_id=1`).
+5. Trong bench, gateway đưa vector `CALL Bill` vào hàm nhận RF mỗi 3 giây khi USB mở. Sau hai `CALL_RECEIPT`, gateway dừng phát vector. Kiểm `/api/health` có `gateway.connected=true` và `gateway.frames_in` tăng. Web phải có đúng một yêu cầu **Thanh toán – Bàn 1**, giữ nguyên ID, giờ đăng ký và FIFO sau gói trùng. Trong nhật ký phải có một `REGISTERED` trước `CALL_RECEIPT`, sau đó là `DUPLICATE`.
+6. Nạp lại với `PBL4_PC_BENCH=0` để chạy radio. Cả bàn và thiết bị tay dùng [bảng địa chỉ và frame RF 31 byte](protocol.md#rf-gateway--thiết-bị-frame-31-byte). Thêm một nút bàn rồi chạy IT-01. Sau đó khai báo thiết bị tay `101` và chạy IT-02. Dùng `STATUS` trong Serial Monitor ở lượt chẩn đoán riêng để xem số frame nhận, frame lỗi, lần lỡ cửa sổ và ACK radio.
+
+Chạy lại UT-06 trên firmware này. Kiểm dòng USB chia mảnh, nhiều dòng liền, mốc 4096/4097 byte, sai venue/đích, phản hồi quá cửa sổ và ngắt PC. Thử đóng và mở COM khi ESP còn nguồn trong một lượt, rồi rút và cắm cáp trong lượt khác. Ghi thời điểm nhận tại gateway và PC để đo cửa sổ 250 ms. Kết quả R03/R04 của V2.1 dùng làm bằng chứng cho firmware cũ. Cấu hình này còn chờ đo trên mạch thật.
 
 ## Phía PC đã sẵn sàng gì
 
-- Đọc/ghi USB serial bằng pyserial, parser NDJSON có giới hạn độ dài, tự kết nối lại (1–16 giây).
-- Giao thức v2 ở `protocol.md`: ranh giới **gateway ↔ PC**. Khung RF gọn giữa nút và gateway do firmware quyết định, miễn là gateway dịch được sang các trường trong `protocol.md` và giữ nguyên `boot_id`, `call_token`, `request_id`, `revision`.
+- Đọc/ghi USB serial bằng pyserial, parser NDJSON có giới hạn độ dài và tự kết nối lại (1–16 giây). PC đặt DTR và RTS về mức không kích hoạt trước khi mở cổng, theo cách đã dùng ở UT-06 R04.
+- Gateway và PC dùng chung [giao thức v2](protocol.md). Gateway giữ định danh RF, chuyển trạng thái qua NDJSON và định tuyến bản trả đúng phiên. PC lưu bền trước khi trả xác nhận ứng dụng.
 - Outbox bền cho cả nút bàn và thiết bị nhân viên; lệnh chỉ phát khi thiết bị liên lạc.
 
 ## Chạy với gateway thật
@@ -43,9 +69,9 @@ Lệnh trong emulator: `call <node> [service|bill]`, `done <node>`, `poll <node>
 
 **Chưa đo, chưa xác minh:** tầm phủ RF, độ trễ và tỷ lệ truyền, dòng ngủ/hoạt động, tuổi thọ pin, tương thích với firmware thật. Test bằng simulator, PTY và trình duyệt không thay thế các phép đo này.
 
-## Điểm firmware cần chốt với phần mềm
+## Điểm cần đo và đối chiếu khi ghép thiết bị
 
-- Tên và mã của các bản tin trong khung RF, nhất là bản tin đối soát sau khi nút khởi động lại (`NODE_HELLO` là đề xuất của phần mềm).
-- Chu kỳ poll khi có yêu cầu (đang giả định 5 giây) và của thiết bị nhân viên (đề xuất 2 giây): trung tâm tính ngưỡng mất liên lạc từ hai giá trị này.
+- Đối soát `NODE_HELLO` sau khi nút khởi động lại, dùng cùng bảng mã RF với gateway.
+- Bắt đầu với bàn đang có yêu cầu poll 5 giây và thiết bị nhân viên poll 2 giây. Đo độ trễ thực và đối chiếu cờ mất liên lạc của PC.
 - Cách báo pin: trung tâm ưu tiên cờ `battery_low` do thiết bị đặt; `battery_mv` chỉ để hiển thị.
 - `boot_id` phải đổi sau mỗi lần khởi động lại và `call_token` không lặp trong một lần boot.
