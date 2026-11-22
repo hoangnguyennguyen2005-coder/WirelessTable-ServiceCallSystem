@@ -545,12 +545,14 @@ def test_serial_worker_reconnects_and_bridges_table_and_staff(setup):
 
     s, _ = setup
     writes, attempts, inbound = [], [], queue.Queue()
+    reads = []
 
     class Fake:
         def __init__(self, *args, **kwargs):
             attempts.append(1)
             if len(attempts) == 1:
                 raise serial.SerialException("disconnect")
+            self.buffer = b""
 
         def __enter__(self):
             return self
@@ -558,11 +560,19 @@ def test_serial_worker_reconnects_and_bridges_table_and_staff(setup):
         def __exit__(self, *args):
             return False
 
+        @property
+        def in_waiting(self):
+            return len(self.buffer)
+
         def read(self, n):
-            try:
-                return inbound.get(timeout=0.01)
-            except queue.Empty:
-                return b""
+            reads.append((self.in_waiting, n))
+            if not self.buffer:
+                try:
+                    self.buffer = inbound.get(timeout=0.01)
+                except queue.Empty:
+                    return b""
+            chunk, self.buffer = self.buffer[:n], self.buffer[n:]
+            return chunk
 
         def write(self, data):
             writes.append(json.loads(data))
@@ -595,6 +605,7 @@ def test_serial_worker_reconnects_and_bridges_table_and_staff(setup):
     finally:
         gateway.stop()
     assert len(attempts) >= 2 and gateway.status()["frames_in"] == 3
+    assert (0, 1) in reads and any(1 < size == waiting < 1024 for waiting, size in reads)
     assert len(s.snapshot()["requests"]) == 1
     reasons = [e["reason"] for e in s.event_log(kind="FAILURE", ascending=True)["items"]]
     assert reasons[0] == "gateway_disconnected:disconnect"

@@ -110,7 +110,9 @@ class SerialGateway:
                     parser = FrameParser()
                     seen_errors = 0
                     while not self.stop_event.is_set():
-                        for event in parser.feed(transport.read(1024)):
+                        # Deliver short frames as soon as LF arrives within the RF window.
+                        read_size = min(1024, transport.in_waiting) or 1
+                        for event in parser.feed(transport.read(read_size)):
                             self.frames_in += 1
                             self.last_frame_at = time.time()
                             # exchange() has committed before any byte is written back.

@@ -436,6 +436,8 @@ class Service:
             result = self.event(event, source)
         except DomainError as error:
             frames.append(self.error_frame(event, error.reason))
+            if error.reason == "wrong_venue":
+                return frames
         if event.message_type in CONTACT_EVENTS:
             released = self.commands(event.node_id)
             frames.extend(released)

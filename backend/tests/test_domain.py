@@ -79,6 +79,24 @@ def test_category_is_registered_and_never_replaced(setup):
     assert new["id"] != r["id"] and (new["seq"], new["category"]) == (2, "SERVICE")
 
 
+def test_wrong_venue_poll_leaves_pending_green_command_for_local_table(setup):
+    s, _ = setup
+    receipt = s.exchange(event())[0]
+    request = s.detail(receipt["request_id"])["request"]
+    s.action(request["id"], "ack", act(request["version"]))
+
+    wrong_venue = s.exchange(event("STATUS_POLL", venue_id=2))
+    assert [(f["message_type"], f["payload"]) for f in wrong_venue] == [
+        ("ERROR", {"reason": "wrong_venue"})
+    ]
+
+    local = s.exchange(event("STATUS_POLL"))
+    assert [(f["message_type"], f["payload"]["led"]) for f in local] == [
+        ("SET_REQUEST_STATUS", "GREEN")
+    ]
+    assert local[0]["command_id"] is not None
+
+
 def test_event_collision_unknown_node_venue_and_idempotency(setup):
     s, _ = setup
     e = event()

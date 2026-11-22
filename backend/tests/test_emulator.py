@@ -51,7 +51,7 @@ def test_emulator_loopback_table_and_staff_round_trip(setup):
         """In-process stand-in for the serial port between the PC adapter and the emulator."""
 
         def __init__(self, *args, **kwargs):
-            pass
+            self.buffer = b""
 
         def __enter__(self):
             return self
@@ -59,12 +59,19 @@ def test_emulator_loopback_table_and_staff_round_trip(setup):
         def __exit__(self, *args):
             return False
 
+        @property
+        def in_waiting(self):
+            return len(self.buffer)
+
         def read(self, n):
             emulator.tick()
-            try:
-                return to_pc.get(timeout=0.02)
-            except queue.Empty:
-                return b""
+            if not self.buffer:
+                try:
+                    self.buffer = to_pc.get(timeout=0.02)
+                except queue.Empty:
+                    return b""
+            chunk, self.buffer = self.buffer[:n], self.buffer[n:]
+            return chunk
 
         def write(self, data):
             emulator.feed(data)
