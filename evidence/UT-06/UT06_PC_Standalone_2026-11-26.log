@@ -1,0 +1,26 @@
+PBL4 UT-06 | PC serial adapter with simulated gateway and Linux PTY
+Extracted from the combined run. Output lines below are copied verbatim.
+Source file: evidence/UT-04-06/PBL4_UT04-06_PC_Standalone.log
+Source commit: 55f92022fcd2cd6472f0987e4b6189789597533a
+Source lines: 1-5, 41-55
+
+PBL4 UT-04–06 | PC-side standalone verification
+Branch test-v2, commit e7cd492021dfa64acfc7749a0e03a2192c22c91b.
+Started: 2026-11-26T13:21:08+07:00
+Python 3.12.14
+Scope: PC-side software, simulated endpoints and Linux pseudo-terminal. No physical gateway, table, handheld or RF link was used.
+UT-06 / PC serial adapter, virtual gateway round trip and standalone emulator over PTY
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-8.4.2, pluggy-1.7.0 -- /tmp/pbl4-ut04-venv/bin/python
+cachedir: .pytest_cache
+rootdir: /tmp/pbl4-pc-ut456.nc76Bm
+configfile: pytest.ini
+plugins: anyio-4.16.0
+collecting ... collected 4 items
+
+backend/tests/test_adapters.py::test_gateway_opens_serial_with_reset_lines_inactive PASSED [ 25%]
+backend/tests/test_adapters.py::test_serial_worker_reconnects_and_bridges_table_and_staff PASSED [ 50%]
+backend/tests/test_emulator.py::test_emulator_loopback_table_and_staff_round_trip PASSED [ 75%]
+backend/tests/test_emulator.py::test_shipped_emulator_real_pty PASSED    [100%]
+
+============================== 4 passed in 7.03s ===============================

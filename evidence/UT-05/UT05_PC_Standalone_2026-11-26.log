@@ -1,0 +1,28 @@
+PBL4 UT-05 | PC reference model with controlled clock
+Extracted from the combined run. Output lines below are copied verbatim.
+Source file: evidence/UT-04-06/PBL4_UT04-06_PC_Standalone.log
+Source commit: 55f92022fcd2cd6472f0987e4b6189789597533a
+Source lines: 1-5, 23-39
+
+PBL4 UT-04–06 | PC-side standalone verification
+Branch test-v2, commit e7cd492021dfa64acfc7749a0e03a2192c22c91b.
+Started: 2026-11-26T13:21:08+07:00
+Python 3.12.14
+Scope: PC-side software, simulated endpoints and Linux pseudo-terminal. No physical gateway, table, handheld or RF link was used.
+UT-05 / PC reference model, controlled clock, retry and polling
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-8.4.2, pluggy-1.7.0 -- /tmp/pbl4-ut04-venv/bin/python
+cachedir: .pytest_cache
+rootdir: /tmp/pbl4-pc-ut456.nc76Bm
+configfile: pytest.ini
+plugins: anyio-4.16.0
+collecting ... collected 6 items
+
+backend/tests/test_adapters.py::test_hold_qualification_exactly_one_attempt_at_5_seconds PASSED [ 16%]
+backend/tests/test_adapters.py::test_registration_unconfirmed_after_5_seconds_then_reconciled PASSED [ 33%]
+backend/tests/test_adapters.py::test_lost_registration_reply_is_reconciled_by_retry PASSED [ 50%]
+backend/tests/test_adapters.py::test_ack_reaches_table_on_next_poll_and_latency_is_recorded PASSED [ 66%]
+backend/tests/test_adapters.py::test_completion_stays_pending_until_centre_confirms PASSED [ 83%]
+backend/tests/test_adapters.py::test_contact_loss_is_visible_within_10_seconds_and_recovers PASSED [100%]
+
+============================== 6 passed in 0.25s ===============================
