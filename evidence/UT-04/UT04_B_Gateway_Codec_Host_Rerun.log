@@ -1,0 +1,42 @@
+PBL4 ECE411 Step 6 — UT-04 Option B gateway RF v2 codec host rerun
+Started: 2026-11-26T12:56:37+07:00
+Commit: 010d897e937bcb686a1710ec824f640b405a7eb3
+Firmware: firmware/PBL4_Gateway_B/PBL4_Gateway_B.ino (Git blob f2eb7299ad6fc12b0403ee5449b7bbcbe9b3f2a9)
+Host: Linux x86_64
+c++ (Debian 14.2.0-19) 14.2.0
+Method: compile the extracted, unmodified gateway codec routines with a fresh host harness. Golden vectors: docs/protocol.md in the stated commit.
+Scope: gateway codec only; no live RF, PC transaction identity, endpoint-wide recipient filtering, or stale-state acceptance tested.
+Compile flags: -std=c++17 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -no-pie
+Run options: ASAN_OPTIONS=detect_leaks=0, UBSAN_OPTIONS=print_stacktrace=1
+
+PASS CALL BILL documented golden vector | len=31 | 02 01 01 00 01 00 7B 00 00 00 07 00 00 00 01 00 00 00 00 00 00 02 00 00 00 00 00 00 00 EC 53
+PASS CALL SERVICE documented golden vector | len=31 | 02 01 01 00 01 00 7B 00 00 00 08 00 00 00 02 00 00 00 00 00 00 01 00 00 00 00 00 00 00 9D D2
+PASS SET_REQUEST_STATUS GREEN documented golden vector | len=31 | 02 11 01 00 01 00 7B 00 00 00 07 00 00 00 02 00 02 00 00 00 02 02 00 00 00 04 03 02 01 88 70
+PASS decode CALL BILL | len=31 | 02 01 01 00 01 00 7B 00 00 00 07 00 00 00 01 00 00 00 00 00 00 02 00 00 00 00 00 00 00 EC 53
+PASS decode CALL SERVICE | len=31 | 02 01 01 00 01 00 7B 00 00 00 08 00 00 00 02 00 00 00 00 00 00 01 00 00 00 00 00 00 00 9D D2
+PASS decode STATUS_POLL | len=31 | 02 02 01 00 01 00 7B 00 00 00 07 00 00 00 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 D3 52
+PASS decode DONE | len=31 | 02 03 01 00 01 00 7B 00 00 00 07 00 00 00 03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 BB D8
+PASS decode STATUS_APPLIED | len=31 | 02 04 01 00 01 00 7B 00 00 00 07 00 00 00 04 00 02 00 00 00 02 02 00 00 00 09 00 00 00 B0 6F
+PASS decode DEVICE_STATUS | len=31 | 02 05 01 00 01 00 7B 00 00 00 07 00 00 00 05 00 00 00 00 00 00 00 03 66 08 00 00 00 00 FE DD
+PASS decode NODE_HELLO | len=31 | 02 06 01 00 01 00 7B 00 00 00 00 00 00 00 06 00 00 00 00 00 00 00 00 00 00 00 00 00 00 2E 61
+PASS decode STAFF_POLL | len=31 | 02 08 01 00 65 00 29 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 01 66 08 00 00 00 00 24 FB
+PASS decode STAFF_APPLIED | len=31 | 02 09 01 00 65 00 29 00 00 00 01 00 00 00 02 00 02 00 00 00 01 00 00 00 00 09 00 00 00 AD 18
+PASS decode STAFF_ACCEPT | len=31 | 02 0A 01 00 66 00 29 00 00 00 01 00 00 00 03 00 02 00 00 00 00 00 00 00 00 00 00 00 00 65 0D
+PASS decode table boundary node=24 boot/token/sequence=max | len=31 | 02 01 01 00 18 00 FF FF FF FF FF FF FF FF FF FF 00 00 00 00 00 02 00 00 00 00 00 00 00 38 79
+PASS reject truncated packet | len=30 | 02 01 01 00 01 00 7B 00 00 00 07 00 00 00 01 00 00 00 00 00 00 02 00 00 00 00 00 00 00 EC 53
+PASS reject oversized packet (extra byte 00) | len=32 | 02 01 01 00 01 00 7B 00 00 00 07 00 00 00 01 00 00 00 00 00 00 02 00 00 00 00 00 00 00 EC 53
+PASS reject incorrect CRC | len=31 | 02 01 01 00 01 00 7B 00 00 00 07 00 00 00 01 00 00 00 00 00 00 02 00 00 00 00 00 00 00 ED 53
+PASS reject GREEN downlink presented as uplink | len=31 | 02 11 01 00 01 00 7B 00 00 00 07 00 00 00 02 00 02 00 00 00 02 02 00 00 00 04 03 02 01 88 70
+PASS reject valid-CRC frame: wrong protocol version | len=31 | 01 01 01 00 01 00 7B 00 00 00 07 00 00 00 01 00 00 00 00 00 00 02 00 00 00 00 00 00 00 E7 52
+PASS reject valid-CRC frame: unknown kind | len=31 | 02 63 01 00 01 00 7B 00 00 00 07 00 00 00 01 00 00 00 00 00 00 02 00 00 00 00 00 00 00 E9 7C
+PASS reject valid-CRC frame: wrong venue | len=31 | 02 01 02 00 01 00 7B 00 00 00 07 00 00 00 01 00 00 00 00 00 00 02 00 00 00 00 00 00 00 46 6C
+PASS reject valid-CRC frame: node outside table range | len=31 | 02 01 01 00 19 00 7B 00 00 00 07 00 00 00 01 00 00 00 00 00 00 02 00 00 00 00 00 00 00 CA 45
+PASS reject valid-CRC frame: table call addressed as staff | len=31 | 02 01 01 00 65 00 7B 00 00 00 07 00 00 00 01 00 00 00 00 00 00 02 00 00 00 00 00 00 00 85 0D
+PASS reject valid-CRC frame: missing call token | len=31 | 02 01 01 00 01 00 7B 00 00 00 00 00 00 00 01 00 00 00 00 00 00 02 00 00 00 00 00 00 00 F3 69
+PASS reject valid-CRC frame: missing CALL category | len=31 | 02 01 01 00 01 00 7B 00 00 00 07 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 4A DC
+PASS reject valid-CRC frame: invalid category | len=31 | 02 01 01 00 01 00 7B 00 00 00 07 00 00 00 01 00 00 00 00 00 00 03 00 00 00 00 00 00 00 3F 14
+PASS reject valid-CRC frame: unknown flags | len=31 | 02 01 01 00 01 00 7B 00 00 00 07 00 00 00 01 00 00 00 00 00 00 02 04 00 00 00 00 00 00 2A 92
+PASS reject valid-CRC staff poll from a table address | len=31 | 02 08 01 00 01 00 29 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 F8 CD
+RESULT 28 passed, 0 failed
+Process exit status: 0
+Finished: 2026-11-26T12:56:38+07:00
