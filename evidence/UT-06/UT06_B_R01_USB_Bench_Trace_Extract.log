@@ -1,0 +1,28 @@
+PBL4 ECE411 Step 6 — UT-06 Option B gateway USB R01 bench trace extract
+Original run: 23 November 2026, 15:35:36–15:35:42 UTC+7
+Extracted verbatim below from the project evidence document. This is a partial trace, not the raw serial capture.
+Source: https://docs.google.com/document/d/1fB5WBY9hdqKWo-bO5MNqtT56PPtSGCWoyyLZz_xIkYA#heading=h.ua13p0p0ifht
+Hardware/firmware: ESP32-C3, COM8, 115200 baud, PBL4-GW-B-R01, TEST_CALL fixture
+Original file cited by the source: UT06_B_R01_USB.log
+Original file SHA-256 cited by the source (not a hash of this extract): 8eec23dbb8065b7665984bf8e56b84691cf2192795cf2908a1e9b94aab1d4757
+Scope: USB parser subset. RADIO=FAIL was reported; RF_IN stayed at 14 and TX_ACK at 11.
+
+001  15:35:36.108+07:00 RUN port=COM8 baud=115200 source=TEST_CALL
+003  15:35:36.113+07:00 RX PONG PBL4-GW-B-R01
+010  15:35:37.750+07:00 RX TEST TX 0210010001007B000000070000000100010000000102000000000000003AB0
+011  15:35:38.123+07:00 PASS split 1/276
+015  15:35:38.743+07:00 PASS split 138/276
+019  15:35:39.366+07:00 PASS split 275/276
+023  15:35:39.866+07:00 PASS joined lines 2/2
+062  15:35:41.146+07:00 PASS JSON length=4096 excluding LF
+100  15:35:42.455+07:00 PASS JSON length=4097 excluding LF
+102  15:35:42.457+07:00 RX TEST STOPPED
+103  15:35:42.893+07:00 PASS USB parser bench subset
+
+Earlier V2.1 bench trace extract (historical build, 19 November 2026 UTC+7)
+R03  16:20:45.380+07:00  step 1  PASS
+R03  16:24:13.427+07:00  step 2  PASS
+R03  16:24:53.063+07:00  step 3a  PASS
+R03  16:25:06.655+07:00  step 3b  BLOCKED
+R04  16:27:41.219+07:00  step 3b  PASS
+R04  16:27:42.666+07:00  step 4  PASS

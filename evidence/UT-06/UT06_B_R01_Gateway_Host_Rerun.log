@@ -1,0 +1,23 @@
+PBL4 ECE411 Step 6 — UT-06 Option B R01 gateway host rerun
+Started: 2026-11-26T13:02:14+07:00
+Commit: 010d897e937bcb686a1710ec824f640b405a7eb3 (test-v2)
+Firmware: firmware/PBL4_Gateway_B/PBL4_Gateway_B.ino (Git blob f2eb7299ad6fc12b0403ee5449b7bbcbe9b3f2a9)
+Scope: unmodified R01 sketch with host mocks for USB, millis, SPI and RF24; libcjson 1.7.18. No physical COM disconnect, live RF or real PC commit was exercised.
+Build: C++17, -Wall -Wextra -Werror -fsanitize=address,undefined -fno-sanitize-recover=all -no-pie; LeakSanitizer disabled.
+c++ (Debian 14.2.0-19) 14.2.0
+PASS R01 fixture responds to PING | PONG PBL4-GW-B-R01
+PASS fixture emits synthetic BILL CALL | {"protocol_version":2,"venue_id":1,"message_type":"CALL","event_id":"1.123.7.1.CALL","node_id":1,"boot_id":123,"call_token":7,"request_id":null,"command_id":null,"payload":{"category":"BILL"}}
+PASS split at 1/276 byte offset, no early receipt | 0 receipts before LF, 1 expected TEST TX after LF
+PASS split at 138/276 byte offset, no early receipt | 0 receipts before LF, 1 expected TEST TX after LF
+PASS split at 275/276 byte offset, no early receipt | 0 receipts before LF, 1 expected TEST TX after LF
+PASS two joined lines yield two replies | 2 expected TEST TX lines
+PASS 4096-byte JSON accepted before LF | one expected TEST TX, USB_BAD=0
+PASS 4097-byte JSON rejected and parser resynchronizes | USB_BAD=1, next valid frame accepted
+PASS TEST STOP restores normal mode
+PASS injected RF CALL alone produces no downlink | stub RF RX produced one USB CALL, zero RF TX while PC reply withheld
+PASS mismatched contact event id produces no downlink
+PASS matching PC fixture reply yields addressed 31-byte receipt | stub RF pipe 50 34 01 01 01
+PASS simulated USB loss clears old contact | no additional RF TX on reconnect with stale contact
+RESULT 13 passed, 0 failed
+Process exit status: 0
+Finished: 2026-11-26T13:02:17+07:00

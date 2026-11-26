@@ -1,0 +1,22 @@
+PBL4 ECE411 Step 6 — UT-05 Option B table scheduler host trace extract
+Original run: 23 November 2026 (simulated time)
+Extracted verbatim below from the project evidence document. This is a partial trace, not the full runner output.
+Source: https://docs.google.com/document/d/1fB5WBY9hdqKWo-bO5MNqtT56PPtSGCWoyyLZz_xIkYA#heading=h.dioglgxbi7df
+Sketch: PBL4_Table01_ProMini_RF_B.ino; simulated 1 ms clock, button, EEPROM, RF and GPIO
+Sketch SHA-256 (as recorded in the source): 77a0ea36398f9a6cc609a2e2370121746c965ee1997e1e41e937375ec034e601
+Scope: table scheduler on host. Physical MCU sleep, staff timing and live RF require separate checks.
+
+TX t=7538 ms kind=1 boot=124 token=2 seq=2
+TX t=8538 ms kind=1 boot=124 token=2 seq=2
+TX t=11538 ms kind=1 boot=124 token=2 seq=2
+PASS matching receipt applies at +4010 ms within 5000 ms deadline @ 11788 ms
+PASS first active table poll follows receipt by 5000 ms @ 16548 ms
+PASS manager GREEN applied on next poll (5010 ms in this scenario) @ 16558 ms
+PASS both LEDs OFF at +10000 ms without distinct loss blink @ 26558 ms
+UT05.3 FAIL: first distinct loss blink +10800 ms exceeds 10000 ms target by 800 ms
+PASS matching receipt reconciles same CALL at +5010 ms @ 12788 ms
+PASS stale revision ignored, confirmed GREEN retained @ 21558 ms
+PASS matching DONE_RECEIPT closes and clears both LEDs in 1010 ms @ 28594 ms
+PASS table stops polling/listening after closure for 15000 ms @ 43834 ms
+PASS reply at window+249 ms applied @ 7788 ms
+PASS reply at window+250 ms ignored @ 7788 ms
